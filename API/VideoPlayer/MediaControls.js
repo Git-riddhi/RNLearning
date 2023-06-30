@@ -16,7 +16,7 @@ MediaControls, { PLAYER_STATES }
   from 'react-native-media-controls';
 import Orientation from 'react-native-orientation-locker';
 
-const App = () => {
+const Mediacontrol = () => {
   const videoPlayer = useRef(null);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
@@ -125,7 +125,7 @@ const App = () => {
   );
 };
 
-export default App;
+export default Mediacontrol;
 
 const styles = StyleSheet.create({
   container: {

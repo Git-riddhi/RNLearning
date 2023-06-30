@@ -17,7 +17,7 @@ const InputScreen = (props) => {
 
         //making data to send on server
         var formBody = [];
-        formBody = JSON.stringify(dataToSend);
+        formBody = JSON.parse(dataToSend);
         //POST request
         fetch('https://crudcrud.com/api/c86005ad4088414c8145734c6335c9d1/unicorns', {
             method: 'POST', //Request Type

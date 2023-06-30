@@ -14,9 +14,7 @@ const AuthNavigator = () => {
 
             <Stack.Navigator initialRouteName='Login'>
                 <Stack.Screen name="Login" component={LoginScreen} options={{
-                    //  headerShown: false,
-                   
-                    //  headerShown: false,
+                    
                 }} />
 
                 <Stack.Screen name="LocalStorage" component={LocalStorage} />

@@ -1,32 +1,16 @@
 import React from 'react'
-import LoginValidation from './API/Formik/Login'
-import SignUpValidation from './API/Formik/SignUp'
-import { LoginProvider } from './API/useContextTask/DataContext'
-import StackNavigator from './API/useContextTask/StackNavigator'
-
+import Navigation from './API/LoginRESTAPI/AuthNavigator'
+import { AuthContext, AuthProvider } from './API/LoginRESTAPI/AuthContext'
 
 const App = () => {
   return (
+    <AuthProvider>
+      <Navigation />
+    </AuthProvider>
 
-    <LoginProvider>
-      <StackNavigator />
-    </LoginProvider>
-    // <>
-    //   <SignUpValidation />
-    // </>
   )
 
 }
 
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     justifyContent: 'center',
-//     alignItems: 'center',
-//   },
-
-
-
-// })
 
 export default App
