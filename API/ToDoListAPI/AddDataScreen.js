@@ -13,7 +13,7 @@ const AddDataScreen = ({ navigation }) => {
     const [isLoading, setIsLoading] = useState(false);
     const [visible, setVisible] = useState(false);
 
-  
+
 
     const getDataUsingGet = () => {
         //GET request
@@ -94,14 +94,14 @@ const AddDataScreen = ({ navigation }) => {
                 <TouchableOpacity onPress={() => { updateData(item) }} >
                     <Image
                         style={styles.iconStyle}
-                        source={require('../assets/edit.png')}
+                        source={require('../../assets/edit.png')}
                     />
                 </TouchableOpacity>
 
                 <TouchableOpacity onPress={() => { deleteData(item._id) }} >
                     <Image
                         style={styles.iconStyle}
-                        source={require('../assets/delete.png')}
+                        source={require('../../assets/delete.png')}
                     />
                 </TouchableOpacity>
 
@@ -119,7 +119,7 @@ const AddDataScreen = ({ navigation }) => {
 
                 <Text style={styles.textInputStyle}>ADD</Text>
                 <TouchableOpacity onPress={() => navigation.navigate("Input", { ShowData })}>
-                    <Image style={styles.image} resizeMode={'contain'} source={require('../assets/add.png')} />
+                    <Image style={styles.image} resizeMode={'contain'} source={require('../../assets/add.png')} />
                 </TouchableOpacity>
 
             </View>
@@ -130,9 +130,9 @@ const AddDataScreen = ({ navigation }) => {
                 ItemSeparatorComponent={<View style={{ width: 10, height: 10 }} />}
             />
 
-            <Modal visible={visible} AnimationType='fade' transparent={true}>
+            {/* <Modal visible={visible} AnimationType='fade' transparent={true}>
                 <ActivityIndicator animating={true} color={'white'} size={20} />
-            </Modal>
+            </Modal> */}
 
         </View>
     );
