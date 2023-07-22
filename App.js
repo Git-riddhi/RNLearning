@@ -1,12 +1,13 @@
 import React from 'react'
 import Navigation from './API/LoginRESTAPI/AuthNavigator'
-import { AuthContext, AuthProvider } from './API/LoginRESTAPI/AuthContext'
+import { LoginProvider } from './API/useContextTask/DataContext'
+import StackNavigator from './API/useContextTask/LocalStorage_Task/StackNavigator'
 
 const App = () => {
   return (
-    <AuthProvider>
-      <Navigation />
-    </AuthProvider>
+    <LoginProvider>
+      <StackNavigator />
+    </LoginProvider>
 
   )
 
