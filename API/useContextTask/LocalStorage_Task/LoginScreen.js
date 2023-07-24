@@ -16,7 +16,6 @@ import {
 
 const LoginScreen = (props) => {
     const [email, setEmail] = useState("");
-    // console.log('email===>', email);
     const [password, setPassword] = useState("");
 
     const [checkEmail, setCheckEmail] = useState("");
@@ -66,19 +65,15 @@ const LoginScreen = (props) => {
         return isValid;
     };
 
+    const LoginsStoreData = async () => {
+        if ({ email, password }) {
+            await AsyncStorage.setItem("Loginkey", JSON.stringify({ email, password }));
+            // console.log('email-password', email, password);
+        } else {
+            console.log("not set data");
+        }
+    };
 
-    // useEffect(() => {
-    //     getData();
-    // }, []);
-
-    // const storeData = async () => {
-    //     if ({ email, password }) {
-    //         await AsyncStorage.setItem("Loginkey", JSON.stringify({ email, password }));
-    //         // console.log('email-password', email, password);
-    //     } else {
-    //         console.log("not set data");
-    //     }
-    // };
 
 
     const getData = async () => {
@@ -86,8 +81,12 @@ const LoginScreen = (props) => {
         const showItem = await AsyncStorage.getItem("Registerkey");
         const getItem = JSON.parse(showItem)
 
-        if(getItem == null){
-            Alert.alert('Please register yourself.')
+        console.log('getItem', getItem);
+
+        if (getItem == null) {
+            Alert.alert('Please register yourself first.')
+            setEmail('')
+            setPassword('')
         }
         // console.log('getItem ===>', getItem);
 
@@ -98,13 +97,14 @@ const LoginScreen = (props) => {
             "email": email,
             "password": password
         }
+           console.log('loginObj.email ===>',loginObj.email);
 
         const existingEmail = getItem.filter((item) => {
 
-            const oldEmail =  item.email
-            const oldPassword =  item.password
+            const oldEmail = item.email
+            const oldPassword = item.password
 
-            console.log(oldEmail,oldPassword,"=======> data")
+            console.log(oldEmail, oldPassword, "=======> oldEmail, oldPassword")
 
             if (oldEmail == loginObj.email && oldPassword == loginObj.password) {
                 console.log("condition true")
@@ -113,7 +113,7 @@ const LoginScreen = (props) => {
             }
         })
 
-        console.log(existingEmail, "existingEmail")
+        console.log("existingEmail ===>", existingEmail)
 
         if (existingEmail.length !== 0) {
             props.navigation.navigate('Home')
@@ -178,11 +178,12 @@ const LoginScreen = (props) => {
                     <TouchableOpacity
                         onPress={() => {
                             if (Login()) {
-                                getData()
-                                // props.navigation.navigate('Home')
+                                if (LoginsStoreData()) {
+                                    getData()
+                                }
                             }
                             else {
-                                console.log("Not success");
+                                Alert.alert("Login unsuccessful");
                             }
 
                         }}

@@ -8,35 +8,42 @@ const deviceheight = Dimensions.get("screen").height
 
 const HomeScreen = (props) => {
     const [output, setOutput] = useState([])
+    const [firstName, setFirstName] = useState('')
     const [refresh, setRefresh] = useState(false)
     // console.log('output', output);
 
     useEffect(() => {
         getProductData()
+        getFirstNameFromSignup()
     }, [refresh])
 
     const refreshList = () => {
-        console.log("function call =====")
+        console.log("refreshList function call =====")
         setRefresh(true)
     }
-    // useEffect(()=>{
-    //     console.log(output,"updated output")
-    // },[output])
+
 
     const getProductData = async () => {
 
         const showItem = await AsyncStorage.getItem("ProductKey");
         const getItem = JSON.parse(showItem)
-        console.log('Homepage getItem ===>', getItem);
-
-        // const array =output
-
-        // array.push(item)
+        console.log('Homepage prodductItem ===>', getItem);
         setOutput(getItem)
         setRefresh(false)
     }
 
+    const getFirstNameFromSignup = async () => {
+        try {
+            const showItem = await AsyncStorage.getItem("Registerkey" )
+            if (showItem !== null) {
+              // We have data!!
+              return showItem;
+            }
+          } catch (error) {
+            console.log('error ===>', error);
+          }
 
+    }
 
 
 
@@ -64,7 +71,7 @@ const HomeScreen = (props) => {
         })
     }
 
-    const deleteTask = (index) => {
+    const deleteData = (index) => {
         Alert.alert(
             "Are You Sure ?",
             "You want to delete ?",
@@ -84,7 +91,7 @@ const HomeScreen = (props) => {
         );
     }
 
-    const editTask = (item) => {
+    const editData = (item) => {
         props.navigation.navigate('AddProduct', { item, updateEvent: updateEvent })
 
     }
@@ -96,19 +103,19 @@ const HomeScreen = (props) => {
             <View>
                 <Text style={styles.textStyle}> ID : {item.ID}</Text>
                 <Text style={styles.textStyle}> Name : {item.Name}</Text>
-                <Text style={styles.textStyle}> Task : {item.Task}</Text>
-                <Text style={styles.textStyle}> Task Id : {item.TaskId}</Text>
+                <Text style={styles.textStyle}> Adress : {item.Address}</Text>
+
             </View>
 
             <View style={styles.iconViewstyle}>
-                <TouchableOpacity onPress={() => { editTask(item) }} >
+                <TouchableOpacity onPress={() => { editData(item) }} >
                     <Image
                         style={styles.iconStyle}
                         source={require('../../../assets/edit.png')}
                     />
                 </TouchableOpacity>
 
-                <TouchableOpacity onPress={() => { deleteTask(index) }} >
+                <TouchableOpacity onPress={() => { deleteData(index) }} >
                     <Image
                         style={styles.iconStyle}
                         source={require('../../../assets/delete.png')}
@@ -122,10 +129,11 @@ const HomeScreen = (props) => {
     const LogOut = async () => {
 
         try {
-            await AsyncStorage.clear();
-            // setEmail('')
-            // setPassword('')
+
             props.navigation.navigate("Login")
+            await AsyncStorage.removeItem('Loginkey');
+            // await AsyncStorage.clear();
+
 
             console.log('Log out successfully');
         } catch (e) {
@@ -143,11 +151,15 @@ const HomeScreen = (props) => {
                 style={styles.ImageBackground}
             >
                 <View style={styles.firstView}>
-                    <Text style={styles.heading}>Products</Text>
+                    <Text style={styles.heading}>Hello,</Text>
                     <TouchableOpacity onPress={() => props.navigation.navigate("AddProduct",
-                        { event: event,
-                            // refreshFun:refreshList 
+                        // {
+                        //     section: 
+                        {
+                            event: event,
+                            refreshList: refreshList
                         }
+                        // }
                     )}>
                         <Image style={styles.image} resizeMode={'contain'} source={require('../../../assets/add.png')} />
                     </TouchableOpacity>

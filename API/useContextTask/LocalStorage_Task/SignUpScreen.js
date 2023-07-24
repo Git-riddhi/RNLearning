@@ -13,8 +13,9 @@ import {
   TouchableOpacity,
   ImageBackground,
 } from "react-native";
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 
-const SignUpScreen = ({ navigation }) => {
+const SignUpScreen = (props) => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
@@ -22,6 +23,8 @@ const SignUpScreen = ({ navigation }) => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
+  const [isPasswordSecure, setIsPasswordSecure] = useState(true);
+  const [isConfirmPasswordSecure , setConfirmIsPasswordSecure] = useState(true)
 
   const [checkFirstName, setCheckFirstName] = useState("");
   const [checkLastName, setCheckLastName] = useState("");
@@ -163,72 +166,99 @@ const SignUpScreen = ({ navigation }) => {
     return isValid;
   };
 
-  // const storeData = async () => {
-  //   const newdata =  await AsyncStorage.getItem("Registerkey");
-  //   const infoData = {
-  //     email: email,
-  //     password: password,
-  //     phoneNumber: phoneNumber,
-  //     firstName: firstName,
-  //     lastName: lastName,
-  //     phoneNumber: phoneNumber,
-  //   };
-  //   try {
-  //     await AsyncStorage.setItem("Registerkey", JSON.stringify( [infoData] ));
-
-  //     console.log("success");
-  //     console.log("Info-Data ===>", infoData);
-  //   }
-  //   catch (err) {
-  //     console.log(err);
-  //   }
-  // }
-
-
   const storeData = async () => {
-
     const infoData = {
-      "email": email,
-      "password": password,
-      "phoneNumber": phoneNumber,
-      "firstName": firstName,
-      "lastName": lastName,
-      "phoneNumber": phoneNumber,
-    }
+      email: email,
+      password: password,
+      phoneNumber: phoneNumber,
+      firstName: firstName,
+      lastName: lastName,
+      phoneNumber: phoneNumber,
+    };
 
     try {
-     
       const existingValue = await getTransaction(infoData);
-      console.log("existingTransactions-Data ===>",existingValue);
+      console.log("existingValue ===>", existingValue);
 
-      await AsyncStorage.setItem("Registerkey", JSON.stringify(existingValue));
+      // const oldValue = JSON.parse(transactions)
+
+      const newValue = [infoData];
+      console.log("newValue ===>", newValue);
+
+      // console.log("after update transactions ===>", updatedValue)
+
+      const signUpObj = {
+        email: email,
+        phoneNumber: phoneNumber,
+      };
+
+      const existingEmail = existingValue.filter((item) => {
+        console.log("item.email", item.email);
+
+        const oldEmail = item.email;
+        const oldPhoneNumber = item.phoneNumber;
+
+        // console.log('existingEmail', existingEmail);
+
+        console.log(oldEmail, oldPhoneNumber, "=======> data");
+
+        console.log("condition", oldPhoneNumber == signUpObj.phoneNumber);
+        console.log("oldPhoneNumber", oldPhoneNumber);
+        console.log("oldEmail", oldEmail);
+
+        console.log("user phoneNumber", signUpObj.phoneNumber);
+
+        if (
+          oldEmail == signUpObj.email &&
+          oldPhoneNumber == signUpObj.phoneNumber
+        ) {
+          Alert.alert("User already exist.");
+          return item;
+        } else {
+          console.log("after condition ");
+          const updatedValue = [...existingValue, ...newValue];
+
+          console.log("updatedValue", updatedValue);
+          AsyncStorage.setItem("Registerkey", JSON.stringify(updatedValue));
+          Alert.alert("Signup", "SignUp successfull", [
+            {
+              text: "OK",
+              onPress: () => props.navigation.navigate("Login", {firstName:firstName}),
+            },
+          ]);
+        }
+      });
+
+      if (existingValue.length == 0) {
+        const updatedValue = [...existingValue, ...newValue];
+
+        console.log("updatedValue ===>", updatedValue);
+        await AsyncStorage.setItem("Registerkey", JSON.stringify(updatedValue));
+        Alert.alert("Signup", "SignUp successfull", [
+          {
+            text: "OK",
+            onPress: () => props.navigation.navigate("Login", {firstName:firstName}),
+          },
+        ]);
+      } else {
+        console.log("user already exist");
+      }
     } catch (err) {
-      console.log('error ===>', err);
+      console.log("error ===>", err);
     }
   };
 
   const getTransaction = async (item) => {
-    
     let transactions = await AsyncStorage.getItem("Registerkey");
-    
-    console.log("transactions ===>" , transactions)
-    
     if (transactions) {
-      console.log('item ===>', item);
-      const newValue =  [item]
-      const oldValue =  JSON.parse(transactions)
-      console.log('item.email===>',item.email);
-      const updatedValue = [...oldValue,...newValue];
-      console.log("after update transactions ===>", updatedValue)
-    
-      return updatedValue
-
+      return JSON.parse(transactions);
     } else {
-      const updateStorage = [item]
-      return updateStorage
+      return [];
+      // const updateStorage = [item]
+      // console.log('updateStorage==>', updateStorage);
+      // return updateStorage
     }
   };
-
 
   return (
     <View style={styles.container}>
@@ -239,7 +269,7 @@ const SignUpScreen = ({ navigation }) => {
       >
         <TouchableOpacity
           onPress={() => {
-            navigation.navigate("Login");
+            props.navigation.navigate("Login");
           }}
         >
           <Image
@@ -326,36 +356,62 @@ const SignUpScreen = ({ navigation }) => {
             <Text style={styles.checkText}></Text>
           )}
 
-          <TextInput
-            style={styles.textInputStyle}
-            placeholder="Enter Password"
-            secureTextEntry={true}
-            onChangeText={(password) => pwd(password)}
-            returnKeyType={"next"}
-            value={password}
-            ref={fourthTextInput}
-            onSubmitEditing={() => {
-              fifthTextInput.current.focus();
-            }}
-          />
+          <View style={styles.passwordInputView}>
+            <TextInput
+              style={styles.textInputStyle}
+              placeholder="Enter Password"
+              secureTextEntry={isPasswordSecure}
+              onChangeText={(password) => pwd(password)}
+              returnKeyType={"next"}
+              value={password}
+              // right={
+              //   <TextInput.Icon
+              //     name={() => <MaterialCommunityIcons name={isPasswordSecure ? "eye-off" : "eye"} size={28} color={'black'} />} // where <Icon /> is any component from vector-icons or anything else
+              //     onPress={() => { isPasswordSecure ? setIsPasswordSecure(false) : setIsPasswordSecure(true) }}
+              //   />
+              // }
+              ref={fourthTextInput}
+              onSubmitEditing={() => {
+                fifthTextInput.current.focus();
+              }}
+            />
+            <MaterialCommunityIcons
+              name={isPasswordSecure ? "eye-off" : "eye"}
+              size={24}
+              style={styles.eyeIconStyle}
+              color={"black"}
+              onPress={() => { isPasswordSecure ? setIsPasswordSecure(false) : setIsPasswordSecure(true) }}
+            />
+          </View>
           {checkPassword ? (
             <Text style={styles.checkText}>{checkPassword}</Text>
           ) : (
             <Text style={styles.checkText}></Text>
           )}
 
-          <TextInput
-            style={styles.textInputStyle}
-            placeholder="Enter Confirm Password"
-            secureTextEntry={true}
-            onChangeText={(confirmPassword) => confirmPwd(confirmPassword)}
-            returnKeyType={"next"}
-            value={confirmPassword}
-            ref={fifthTextInput}
-            onSubmitEditing={() => {
-              sixthTextInput.current.focus();
-            }}
-          />
+          <View style={styles.passwordInputView}>
+
+
+            <TextInput
+              style={styles.textInputStyle}
+              placeholder="Enter Confirm Password"
+              secureTextEntry={isConfirmPasswordSecure}
+              onChangeText={(confirmPassword) => confirmPwd(confirmPassword)}
+              returnKeyType={"next"}
+              value={confirmPassword}
+              ref={fifthTextInput}
+              onSubmitEditing={() => {
+                sixthTextInput.current.focus();
+              }}
+            />
+            <MaterialCommunityIcons
+              name={isConfirmPasswordSecure ? "eye-off" : "eye"}
+              size={24}
+              style={styles.eyeIconStyle}
+              color={"black"}
+              onPress={() => { isConfirmPasswordSecure ? setConfirmIsPasswordSecure(false) : setConfirmIsPasswordSecure(true) }}
+            />
+          </View>
           {checkConfirmPassword ? (
             <Text style={styles.checkText}> {checkConfirmPassword} </Text>
           ) : (
@@ -384,7 +440,6 @@ const SignUpScreen = ({ navigation }) => {
               onPress={() => {
                 if (SignUp()) {
                   storeData();
-                  navigation.navigate("Login");
                 }
                 // else {
                 //   // console.log("Not success");
@@ -465,13 +520,28 @@ const styles = StyleSheet.create({
     color: "red",
     textAlign: "center",
   },
+  passwordInputView: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    width: '100%',
+    marginBottom: 5
+  },
+  eyeIconStyle: {
+    position: 'absolute',
+    right: 40
+
+  },
 
   textInputStyle: {
     borderRadius: 20,
-    backgroundColor: "white",
+    width: '90%',
+    backgroundColor:'red',
+    alignSelf: 'center',
+    // backgroundColor: "white",
     padding: 7,
     elevation: 5,
-    marginHorizontal: 20,
+    // marginHorizontal: 20,
     marginTop: 5,
   },
 

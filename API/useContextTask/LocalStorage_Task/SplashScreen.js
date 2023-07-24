@@ -11,8 +11,10 @@ const SplashScreen = (props) => {
     }, [])
 
     const getData = async () => {
-        const getItem = await AsyncStorage.getItem('Registerkey')
-        if (getItem === null) {
+        const getItem = await AsyncStorage.getItem('Loginkey')
+        const registerGetItem = await AsyncStorage.getItem('Registerkey')
+
+        if (getItem === null && registerGetItem === null) {
 
             console.log("yes null");
 
