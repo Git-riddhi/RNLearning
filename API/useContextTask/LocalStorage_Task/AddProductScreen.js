@@ -21,18 +21,17 @@ const AddProductScreen = (props) => {
 
         try {
             const productDataArray = [productData]
-            // const existingValue = await getTransaction(productData);
-            // console.log("existingTransactions-Data ===>",existingValue);
+
             const oldProductData = await AsyncStorage.getItem('ProductKey')
 
             const oldData = JSON.parse(oldProductData)
             console.log("oldProductData======", oldData)
             if (oldData !== null) {
-                const newDataArray =  [...oldData,...productDataArray]
-                console.log("newDataArray======",newDataArray)
-                await AsyncStorage.setItem('ProductKey', JSON.stringify(newDataArray))
+                const newData =  [...oldData,...productDataArray]
+                console.log("newDataArray======",newData)
+                await AsyncStorage.setItem('ProductKey', JSON.stringify(newData))
                 props.navigation.navigate('Home')
-                // props.route.params.refreshFun
+                props.route.params.refreshList(newData)
 
             } else {
                 await AsyncStorage.setItem("ProductKey", JSON.stringify(productDataArray));
@@ -51,29 +50,22 @@ const AddProductScreen = (props) => {
             setName(props.route.params.item.Name)
             // console.log("previous item's name :", props.route.params.item.Name)
             setId(props.route.params.item.ID)
+            setAddress(props.route.params.item.Address)
 
         }
 
     }, [])
 
-    // const itemEvent = () => {
-    //     let event = { 'Name': name, 'ID': id, 'Task': task, 'TaskId': taskId }
-    //     props.route.params.event(event)
 
-    //     props.navigation.goBack()
 
-    //     // console.log("event", event)
+    const getUpdateData = () => {
+        let updatedata = { 'Name': name, 'ID': id, 'Address':address }
+        props.route.params.updateEvent(updatedata)
 
-    // }
+        props.navigation.goBack()
 
-    // const getUpdateData = () => {
-    //     let updatedata = { 'Name': name, 'ID': id, 'Task': task, 'TaskId': taskId }
-    //     props.route.params.updateEvent(updatedata)
-
-    //     props.navigation.goBack()
-
-    //     console.log("updated data :", updatedata)
-    // }
+        console.log("updated data :", updatedata)
+    }
 
     return (
         <View style={styles.container}>
