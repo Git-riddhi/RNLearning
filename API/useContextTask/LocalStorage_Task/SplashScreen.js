@@ -12,9 +12,10 @@ const SplashScreen = (props) => {
 
     const getData = async () => {
         const getItem = await AsyncStorage.getItem('Loginkey')
-        const registerGetItem = await AsyncStorage.getItem('Registerkey')
+        console.log("splash get item login key  ==else==>", getItem);
 
-        if (getItem === null && registerGetItem === null) {
+
+        if (getItem === null) {
 
             console.log("yes null");
 
@@ -26,7 +27,7 @@ const SplashScreen = (props) => {
             setTimeout(() => {
                 props.navigation.navigate("Home")
             }, 1000);
-            // console.log("splash get item ==else==>", getItem);
+            
 
         }
     };

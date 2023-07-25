@@ -15,6 +15,8 @@ import {
 } from "react-native";
 
 const LoginScreen = (props) => {
+
+    // Use states
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
@@ -23,6 +25,8 @@ const LoginScreen = (props) => {
 
     const firstTextInput = useRef();
 
+
+    // Validation Regex
     const mail = (email) => {
         var emailRegex =
             /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
@@ -45,6 +49,8 @@ const LoginScreen = (props) => {
         }
     };
 
+
+    // Function for Validation
     const Login = () => {
         var isValid = true;
 
@@ -65,66 +71,53 @@ const LoginScreen = (props) => {
         return isValid;
     };
 
-    const LoginsStoreData = async () => {
-        if ({ email, password }) {
-            await AsyncStorage.setItem("Loginkey", JSON.stringify({ email, password }));
-            // console.log('email-password', email, password);
-        } else {
-            console.log("not set data");
-        }
-    };
 
-
-
+    // Function for get data from Registerkey of asyncstorage
     const getData = async () => {
-
         const showItem = await AsyncStorage.getItem("Registerkey");
-        const getItem = JSON.parse(showItem)
+        const getItem = JSON.parse(showItem);
 
-        console.log('getItem', getItem);
+        console.log("login getItem in object", getItem);
 
         if (getItem == null) {
-            Alert.alert('Please register yourself first.')
-            setEmail('')
-            setPassword('')
+            Alert.alert("Please register yourself first.");
+            setEmail("");
+            setPassword("");
         }
-        // console.log('getItem ===>', getItem);
 
         // const emails = getItem.map((dataobj) => dataobj.email)
         // console.log(emails,"emails array")
 
         const loginObj = {
-            "email": email,
-            "password": password
-        }
-           console.log('loginObj.email ===>',loginObj.email);
+            email: email,
+            password: password,
+        };
+        console.log("loginObj.email ===>", loginObj.email);
 
         const existingEmail = getItem.filter((item) => {
+            const oldEmail = item.email;
+            const oldPassword = item.password;
 
-            const oldEmail = item.email
-            const oldPassword = item.password
-
-            console.log(oldEmail, oldPassword, "=======> oldEmail, oldPassword")
+            console.log(oldEmail, oldPassword, "=======> oldEmail, oldPassword");
 
             if (oldEmail == loginObj.email && oldPassword == loginObj.password) {
-                console.log("condition true")
+                console.log("condition true");
 
-                return item
+                return item;
             }
-        })
+        });
 
-        console.log("existingEmail ===>", existingEmail)
+        console.log("existingEmail ===>", existingEmail);
 
         if (existingEmail.length !== 0) {
-            props.navigation.navigate('Home')
+            await AsyncStorage.setItem("Loginkey", JSON.stringify(existingEmail));
+            props.navigation.navigate("Home");
+            setEmail("");
+            setPassword("");
+        } else {
+            Alert.alert("Invalid data.");
         }
-        else {
-            Alert.alert('Invalid data.')
-        }
-
-    }
-
-
+    };
 
     return (
         <View style={styles.container}>
@@ -133,7 +126,6 @@ const LoginScreen = (props) => {
                 resizeMode="cover"
                 style={styles.image}
             >
-
                 <Text style={styles.headertext}>LogIn </Text>
 
                 <View style={styles.innercontainer}>
@@ -169,7 +161,6 @@ const LoginScreen = (props) => {
                     ) : (
                         <Text style={styles.checkText}></Text>
                     )}
-
                 </View>
 
                 <View style={styles.Login}>
@@ -178,14 +169,8 @@ const LoginScreen = (props) => {
                     <TouchableOpacity
                         onPress={() => {
                             if (Login()) {
-                                if (LoginsStoreData()) {
-                                    getData()
-                                }
+                                getData();
                             }
-                            else {
-                                Alert.alert("Login unsuccessful");
-                            }
-
                         }}
                         style={styles.aerrowTouch}
                     >
@@ -196,13 +181,14 @@ const LoginScreen = (props) => {
                     </TouchableOpacity>
                 </View>
 
-
                 <View style={styles.SignUp}>
                     <Text style={styles.footerText}>Or create account</Text>
                     <Text style={styles.LoginButtonText}> SignUp </Text>
 
                     <TouchableOpacity
-                        onPress={() => { props.navigation.navigate("SignUp") }}
+                        onPress={() => {
+                            props.navigation.navigate("SignUp");
+                        }}
                         style={styles.aerrowTouch}
                     >
                         <Image
@@ -211,21 +197,6 @@ const LoginScreen = (props) => {
                         />
                     </TouchableOpacity>
                 </View>
-
-                {/* <View style={styles.footer}>
-                        <TouchableOpacity>
-                            <Image source={require('../../../assets/facebook.png')} style={{ height: 30, width: 30, resizeMode: 'cover' }} />
-                        </TouchableOpacity>
-                        <TouchableOpacity>
-                            <Image source={require('../../../assets/twitter.png')} style={{ height: 30, width: 30, resizeMode: 'cover', marginLeft: 30 }} />
-                        </TouchableOpacity>
-                        <TouchableOpacity>
-                            <Image source={require('../../../assets/search.png')} style={{ height: 30, width: 30, resizeMode: 'cover', marginLeft: 30 }} />
-                        </TouchableOpacity>
-                    </View> */}
-
-
-
             </ImageBackground>
         </View>
     );
@@ -237,7 +208,7 @@ const styles = StyleSheet.create({
     },
 
     innercontainer: {
-        alignItems: 'center',
+        alignItems: "center",
     },
     headertext: {
         fontWeight: "bold",
@@ -255,18 +226,17 @@ const styles = StyleSheet.create({
     textInputStyle: {
         borderRadius: 20,
         backgroundColor: "white",
-        width: '80%',
+        width: "80%",
         padding: 7,
         elevation: 5,
         marginHorizontal: 20,
-        marginTop: 5
+        marginTop: 5,
     },
 
     image: {
         flex: 1,
         justifyContent: "center",
     },
-
 
     LoginButtonText: {
         color: "black",
@@ -276,13 +246,13 @@ const styles = StyleSheet.create({
 
     Login: {
         flexDirection: "row",
-        alignItems: 'center',
+        alignItems: "center",
         justifyContent: "flex-end",
         margin: 20,
     },
     SignUp: {
         flexDirection: "row",
-        alignItems: 'center',
+        alignItems: "center",
         justifyContent: "flex-end",
         margin: 20,
     },
@@ -300,18 +270,18 @@ const styles = StyleSheet.create({
         tintColor: "white",
     },
     footer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-        margin: 10
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "center",
+        margin: 10,
     },
 
     footerText: {
         fontSize: 15,
-        color: 'orange',
-        alignSelf: 'center',
-        fontWeight: 'bold',
-        margin: 10
+        color: "orange",
+        alignSelf: "center",
+        fontWeight: "bold",
+        margin: 10,
     },
 });
 
