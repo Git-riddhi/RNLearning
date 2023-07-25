@@ -5,9 +5,7 @@ import StackNavigator from './API/useContextTask/LocalStorage_Task/StackNavigato
 
 const App = () => {
   return (
-    <LoginProvider>
       <StackNavigator />
-    </LoginProvider>
 
   )
 

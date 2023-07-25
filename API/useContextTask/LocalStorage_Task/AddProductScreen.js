@@ -1,71 +1,88 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import React, { useEffect, useState } from 'react';
-import { Dimensions, ImageBackground } from 'react-native';
-import { View, StyleSheet, Text, Image, TextInput, TouchableOpacity } from 'react-native';
-import { event } from 'react-native-reanimated';
-
-// const deviceWidth = Dimensions.get("screen").width
-// const deviceHeight = Dimensions.get("screen").height
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import React, { useEffect, useState } from "react";
+import { ImageBackground } from "react-native";
+import {
+    View,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+} from "react-native";
 
 const AddProductScreen = (props) => {
-    const [name, setName] = useState('')
-    const [id, setId] = useState('')
-    const [address, setAddress] = useState('')
+    // Use states
+    const [name, setName] = useState("");
+    const [id, setId] = useState("");
+    const [address, setAddress] = useState("");
 
+    // Function for store product data in localstorege
     const storeProductData = async () => {
-
         const productData = {
-            'Name': name, 'ID': id, 'Address': address
-        }
-        console.log('productData===>', productData);
+            Name: name,
+            ID: id,
+            Address: address,
+        };
+        console.log("productData===>", productData);
 
         try {
-            const productDataArray = [productData]
+            const productDataArray = [productData];
 
-            const oldProductData = await AsyncStorage.getItem('ProductKey')
+            const oldProductData = await AsyncStorage.getItem("ProductKey");
+            console.log('oldProductData', oldProductData);
+            if (oldProductData !== null) {
+                const oldData = JSON.parse(oldProductData);
+                const newData = [...oldData, ...productDataArray];
 
-            const oldData = JSON.parse(oldProductData)
-            console.log("oldProductData======", oldData)
-            if (oldData !== null) {
-                const newData =  [...oldData,...productDataArray]
-                console.log("newDataArray======",newData)
-                await AsyncStorage.setItem('ProductKey', JSON.stringify(newData))
-                props.navigation.navigate('Home')
-                props.route.params.refreshList(newData)
-
+                console.log('newData', newData);
+                await AsyncStorage.setItem("ProductKey", JSON.stringify(newData));
             } else {
-                await AsyncStorage.setItem("ProductKey", JSON.stringify(productDataArray));
-                props.navigation.navigate('Home')
+                await AsyncStorage.setItem(
+                    "ProductKey",
+                    JSON.stringify(productDataArray)
+                );
             }
 
+            props.navigation.navigate("Home");
+            props.route.params.refreshList();
         } catch (err) {
-            console.log('error ===>', err);
+            console.log("error ===>", err);
         }
     };
 
     useEffect(() => {
-        if (
-            props.route.params.item) {
-            // console.log("previous item", props.route.params.item)
-            setName(props.route.params.item.Name)
-            // console.log("previous item's name :", props.route.params.item.Name)
-            setId(props.route.params.item.ID)
-            setAddress(props.route.params.item.Address)
-
+        if (props.route.params.item) {
+            setName(props.route.params.item.Name);
+            setId(props.route.params.item['ID']);
+            setAddress(props.route.params.item.Address);
         }
-
-    }, [])
-
+    }, []);
 
 
-    const getUpdateData = () => {
-        let updatedata = { 'Name': name, 'ID': id, 'Address':address }
-        props.route.params.updateEvent(updatedata)
+    // Function for update the data
+    const getUpdateData = async () => {
 
-        props.navigation.goBack()
+        const updatedata = { Name: name, ID: id, Address: address }
 
-        console.log("updated data :", updatedata)
-    }
+        const getITemFromProductKey = await AsyncStorage.getItem('ProductKey')
+        const itemInObject = JSON.parse(getITemFromProductKey)
+        console.log('itemInObject', itemInObject);
+
+        itemInObject.forEach((item, index) => {
+            if (item['ID'] == updatedata['ID']) {
+                console.log('condition ');
+                itemInObject[index] = updatedata
+                console.log('updatdata', itemInObject[index]);
+            }
+
+        })
+        console.log('updated itemInObject', itemInObject);
+        await AsyncStorage.setItem('ProductKey', JSON.stringify(itemInObject))
+
+        console.log('JSON.stringify(updatedata)', JSON.stringify(itemInObject));
+        props.navigation.navigate('Home')
+        props.route.params.refreshList();
+
+    };
 
     return (
         <View style={styles.container}>
@@ -76,22 +93,20 @@ const AddProductScreen = (props) => {
             >
                 <Text style={styles.heading}>ADD ITEMS</Text>
                 <View style={styles.firstView}>
-
                     <TextInput
                         placeholder="Enter ID"
                         onChangeText={(id) => setId(id)}
                         style={styles.textInputStyle}
                         autoCapitalize="words"
-                        placeholderTextColor='grey'
+                        placeholderTextColor="grey"
                         value={id}
-
                     />
                     <TextInput
                         placeholder="Enter Name"
                         onChangeText={(name) => setName(name)}
                         style={styles.textInputStyle}
                         autoCapitalize="words"
-                        placeholderTextColor='grey'
+                        placeholderTextColor="grey"
                         value={name}
                     />
                     <TextInput
@@ -100,48 +115,48 @@ const AddProductScreen = (props) => {
                         onChangeText={(address) => setAddress(address)}
                         style={styles.textInputStyle}
                         autoCapitalize="words"
-                        placeholderTextColor='grey'
+                        placeholderTextColor="grey"
                         value={address}
                     />
 
-                    {/* <TouchableOpacity
-                        style={styles.submitButton}
-                        onPress={() => { storeProductData() }}>
-                        <Text style={styles.submitButtonText}> SUBMIT </Text>
-                    </TouchableOpacity> */}
-
-
-                    {props.route.params.item
-                        ? <TouchableOpacity
+                    {props.route.params.item ? (
+                        <TouchableOpacity
                             style={styles.submitButton}
-                            onPress={() => { getUpdateData() }}>
+                            onPress={() => {
+                                getUpdateData();
+                            }}
+                        >
                             <Text style={styles.submitButtonText}> UPDATE </Text>
                         </TouchableOpacity>
-                        : <TouchableOpacity
+                    ) : (
+                        <TouchableOpacity
                             style={styles.submitButton}
-                            onPress={() => { storeProductData() }}>
+                            onPress={() => {
+                                storeProductData();
+                            }}
+                        >
                             <Text style={styles.submitButtonText}> SUBMIT </Text>
                         </TouchableOpacity>
-                    }
+                    )}
                 </View>
             </ImageBackground>
         </View>
     );
-}
+};
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: 'orange',
+        backgroundColor: "orange",
     },
     ImageBackground: {
         flex: 1,
         justifyContent: "center",
     },
     heading: {
-        color: '#1e90ff',
-        textAlign: 'center',
-        fontWeight: 'bold',
+        color: "#1e90ff",
+        textAlign: "center",
+        fontWeight: "bold",
         fontSize: 25,
         marginTop: 30,
         marginBottom: 10,
@@ -150,32 +165,31 @@ const styles = StyleSheet.create({
     image: {
         height: 50,
         width: 50,
-        tintColor: 'white'
+        tintColor: "white",
     },
     firstView: {
-        alignItems: 'center',
-        justifyContent: 'center',
+        alignItems: "center",
+        justifyContent: "center",
     },
     textInputStyle: {
-        width: '80%',
+        width: "80%",
         borderRadius: 20,
-        backgroundColor: '#f0ffff',
+        backgroundColor: "#f0ffff",
         padding: 7,
         elevation: 5,
-        // marginRight: 20,
-        marginTop: 30
+        marginTop: 30,
     },
     submitButton: {
-        backgroundColor: 'orange',
+        backgroundColor: "orange",
         padding: 10,
         marginTop: 50,
         borderRadius: 20,
     },
     submitButtonText: {
         fontSize: 20,
-        color: 'white',
-        textAlign: 'center',
-        fontWeight: 'bold'
-    }
+        color: "white",
+        textAlign: "center",
+        fontWeight: "bold",
+    },
 });
 export default AddProductScreen;

@@ -1,17 +1,19 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useEffect, useState } from 'react';
-import { Button, Dimensions, ImageBackground, } from 'react-native';
-import { View, StyleSheet, Text, Alert, Image, TextInput, TouchableOpacity, FlatList } from 'react-native';
+import { Dimensions, ImageBackground, } from 'react-native';
+import { View, StyleSheet, Text, Alert, Image, TouchableOpacity, FlatList } from 'react-native';
 
 const deviceWidth = Dimensions.get("screen").width
 const deviceheight = Dimensions.get("screen").height
 
 const HomeScreen = (props) => {
+
+    // Use states
     const [output, setOutput] = useState([])
     const [firstName, setFirstName] = useState('')
     const [refresh, setRefresh] = useState(false)
-    // console.log('output', output);
 
+    //Function call
     useEffect(() => {
         getProductData()
         getFirstNameFromSignup()
@@ -22,9 +24,8 @@ const HomeScreen = (props) => {
         setRefresh(true)
     }
 
-
+    //  Function for get product data from Productkey of asyncstorage
     const getProductData = async () => {
-
         const showItem = await AsyncStorage.getItem("ProductKey");
         const getItem = JSON.parse(showItem)
         console.log('Homepage prodductItem ===>', getItem);
@@ -32,21 +33,26 @@ const HomeScreen = (props) => {
         setRefresh(false)
     }
 
+    // Function for get firstname from Loginkey of asyncstorage
     const getFirstNameFromSignup = async () => {
         try {
-            const showItem = await AsyncStorage.getItem("Registerkey" )
+            const showItem = await AsyncStorage.getItem("Loginkey")
+            // console.log('Home showitem ===>', showItem);
+
             if (showItem !== null) {
-              // We have data!!
-              return showItem;
+                const result = JSON.parse(showItem)
+                setFirstName(result[0].firstName)
+                // console.log("user firstname ===>", result[0].firstName)
+                return showItem;
             }
-          } catch (error) {
+        } catch (error) {
             console.log('error ===>', error);
-          }
+        }
 
     }
 
 
-
+    // Function for push data of array
     const event = (item) => {
 
         console.log('item', item)
@@ -54,23 +60,15 @@ const HomeScreen = (props) => {
         const array = [...output]
         array.push(item)
         setOutput(array)
+        console.log('output array ', array);
 
     }
 
-    const updateEvent = (updatedata) => {
 
-        const updatedArray = [...output]
-        console.log(output, 'output array')
+    // Function for show update data
+    
 
-        updatedArray.forEach((item, index) => {
-            if (item.ID == updatedata.ID) {
-                updatedArray[index] = updatedata
-            }
-
-            setOutput(updatedArray)
-        })
-    }
-
+    // Function of delete the data
     const deleteData = (index) => {
         Alert.alert(
             "Are You Sure ?",
@@ -91,13 +89,23 @@ const HomeScreen = (props) => {
         );
     }
 
+
+    // Function for edit the data
     const editData = (item) => {
-        props.navigation.navigate('AddProduct', { item, updateEvent: updateEvent })
+        props.navigation.navigate('AddProduct',
+            {
+                item,
+                refreshList:refreshList
+                //  updateEvent: updateEvent 
+            }
+        )
 
     }
 
+
+    // Function for Show item of flatlist
     const Item = ({ item, index }) => (
-        // console.log("item-name :",item.Name),
+
         <View style={styles.mainView}>
 
             <View>
@@ -126,15 +134,16 @@ const HomeScreen = (props) => {
 
     );
 
+
+    // Function for Logout
     const LogOut = async () => {
 
         try {
 
             props.navigation.navigate("Login")
             await AsyncStorage.removeItem('Loginkey');
+
             // await AsyncStorage.clear();
-
-
             console.log('Log out successfully');
         } catch (e) {
             console.log(e)
@@ -151,15 +160,13 @@ const HomeScreen = (props) => {
                 style={styles.ImageBackground}
             >
                 <View style={styles.firstView}>
-                    <Text style={styles.heading}>Hello,</Text>
+                    <Text style={styles.heading}>Hello, {firstName}</Text>
                     <TouchableOpacity onPress={() => props.navigation.navigate("AddProduct",
-                        // {
-                        //     section: 
                         {
                             event: event,
                             refreshList: refreshList
                         }
-                        // }
+
                     )}>
                         <Image style={styles.image} resizeMode={'contain'} source={require('../../../assets/add.png')} />
                     </TouchableOpacity>

@@ -5,7 +5,6 @@ import {
   ScrollView,
   View,
   StyleSheet,
-  Button,
   Image,
   Text,
   TextInput,
@@ -16,6 +15,7 @@ import {
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 
 const SignUpScreen = (props) => {
+  // UseStates
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
@@ -24,7 +24,8 @@ const SignUpScreen = (props) => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [isPasswordSecure, setIsPasswordSecure] = useState(true);
-  const [isConfirmPasswordSecure , setConfirmIsPasswordSecure] = useState(true)
+  const [isConfirmPasswordSecure, setConfirmIsPasswordSecure] = useState(true);
+  const [isUserAlreadySignup, setIsUserAlreadySignup] = useState(false);
 
   const [checkFirstName, setCheckFirstName] = useState("");
   const [checkLastName, setCheckLastName] = useState("");
@@ -34,6 +35,7 @@ const SignUpScreen = (props) => {
   const [checkConfirmPassword, setCheckConfirmPassword] = useState("");
   const [checkPhoneNumber, setCheckPhoneNumber] = useState("");
 
+  // Use Reference
   const firstTextInput = useRef();
   const secondTextInput = useRef();
   const thirdTextInput = useRef();
@@ -41,6 +43,7 @@ const SignUpScreen = (props) => {
   const fifthTextInput = useRef();
   const sixthTextInput = useRef();
 
+  // Validation Regex
   const name1 = (firstName) => {
     var firstNameRegex = /^[A-Za-z]{0,10}$/;
     setFirstName(firstName);
@@ -111,6 +114,7 @@ const SignUpScreen = (props) => {
     }
   };
 
+  // Function For Validation
   const SignUp = () => {
     var isValid = true;
 
@@ -166,6 +170,7 @@ const SignUpScreen = (props) => {
     return isValid;
   };
 
+  // Function for Data store in Localstorage
   const storeData = async () => {
     const infoData = {
       email: email,
@@ -176,72 +181,59 @@ const SignUpScreen = (props) => {
       phoneNumber: phoneNumber,
     };
 
+    var alreadyRegisteredUserData = false;
+
     try {
       const existingValue = await getTransaction(infoData);
       console.log("existingValue ===>", existingValue);
 
-      // const oldValue = JSON.parse(transactions)
-
-      const newValue = [infoData];
-      console.log("newValue ===>", newValue);
-
-      // console.log("after update transactions ===>", updatedValue)
-
-      const signUpObj = {
-        email: email,
-        phoneNumber: phoneNumber,
-      };
-
-      const existingEmail = existingValue.filter((item) => {
-        console.log("item.email", item.email);
-
-        const oldEmail = item.email;
-        const oldPhoneNumber = item.phoneNumber;
-
-        // console.log('existingEmail', existingEmail);
-
-        console.log(oldEmail, oldPhoneNumber, "=======> data");
-
-        console.log("condition", oldPhoneNumber == signUpObj.phoneNumber);
-        console.log("oldPhoneNumber", oldPhoneNumber);
-        console.log("oldEmail", oldEmail);
-
-        console.log("user phoneNumber", signUpObj.phoneNumber);
-
-        if (
-          oldEmail == signUpObj.email &&
-          oldPhoneNumber == signUpObj.phoneNumber
-        ) {
-          Alert.alert("User already exist.");
-          return item;
-        } else {
-          console.log("after condition ");
-          const updatedValue = [...existingValue, ...newValue];
-
-          console.log("updatedValue", updatedValue);
-          AsyncStorage.setItem("Registerkey", JSON.stringify(updatedValue));
-          Alert.alert("Signup", "SignUp successfull", [
-            {
-              text: "OK",
-              onPress: () => props.navigation.navigate("Login", {firstName:firstName}),
-            },
-          ]);
-        }
-      });
-
       if (existingValue.length == 0) {
-        const updatedValue = [...existingValue, ...newValue];
+        const updatedValue = [infoData];
 
         console.log("updatedValue ===>", updatedValue);
         await AsyncStorage.setItem("Registerkey", JSON.stringify(updatedValue));
         Alert.alert("Signup", "SignUp successfull", [
           {
             text: "OK",
-            onPress: () => props.navigation.navigate("Login", {firstName:firstName}),
+            onPress: () => props.navigation.navigate("Login"),
           },
         ]);
       } else {
-        console.log("user already exist");
+
+        // existingValue.map((dataobj)=>{
+        //   if (
+        //     dataobj?.email === infoData?.email ||
+        //     dataobj?.phoneNumber === infoData?.phoneNumber
+        //   ) {
+        //     alreadyRegisteredUserData = true;
+           
+        //   }
+        // })
+
+        for (let dataobj of existingValue) {
+          if (
+            dataobj?.email === infoData?.email ||
+            dataobj?.phoneNumber === infoData?.phoneNumber
+          ) {
+            alreadyRegisteredUserData = true;
+            break;
+          }
+        }
+
+        if (alreadyRegisteredUserData) {
+          Alert.alert("User already exist.");
+        } else {
+          const updatedValue = [...existingValue, infoData];
+
+          console.log("updatedValue", updatedValue);
+          AsyncStorage.setItem("Registerkey", JSON.stringify(updatedValue));
+          Alert.alert("Signup", "SignUp successfull", [
+            {
+              text: "OK",
+              onPress: () => props.navigation.navigate("Login"),
+            },
+          ]);
+        }
       }
     } catch (err) {
       console.log("error ===>", err);
@@ -254,9 +246,6 @@ const SignUpScreen = (props) => {
       return JSON.parse(transactions);
     } else {
       return [];
-      // const updateStorage = [item]
-      // console.log('updateStorage==>', updateStorage);
-      // return updateStorage
     }
   };
 
@@ -364,12 +353,6 @@ const SignUpScreen = (props) => {
               onChangeText={(password) => pwd(password)}
               returnKeyType={"next"}
               value={password}
-              // right={
-              //   <TextInput.Icon
-              //     name={() => <MaterialCommunityIcons name={isPasswordSecure ? "eye-off" : "eye"} size={28} color={'black'} />} // where <Icon /> is any component from vector-icons or anything else
-              //     onPress={() => { isPasswordSecure ? setIsPasswordSecure(false) : setIsPasswordSecure(true) }}
-              //   />
-              // }
               ref={fourthTextInput}
               onSubmitEditing={() => {
                 fifthTextInput.current.focus();
@@ -380,7 +363,11 @@ const SignUpScreen = (props) => {
               size={24}
               style={styles.eyeIconStyle}
               color={"black"}
-              onPress={() => { isPasswordSecure ? setIsPasswordSecure(false) : setIsPasswordSecure(true) }}
+              onPress={() => {
+                isPasswordSecure
+                  ? setIsPasswordSecure(false)
+                  : setIsPasswordSecure(true);
+              }}
             />
           </View>
           {checkPassword ? (
@@ -390,8 +377,6 @@ const SignUpScreen = (props) => {
           )}
 
           <View style={styles.passwordInputView}>
-
-
             <TextInput
               style={styles.textInputStyle}
               placeholder="Enter Confirm Password"
@@ -409,7 +394,11 @@ const SignUpScreen = (props) => {
               size={24}
               style={styles.eyeIconStyle}
               color={"black"}
-              onPress={() => { isConfirmPasswordSecure ? setConfirmIsPasswordSecure(false) : setConfirmIsPasswordSecure(true) }}
+              onPress={() => {
+                isConfirmPasswordSecure
+                  ? setConfirmIsPasswordSecure(false)
+                  : setConfirmIsPasswordSecure(true);
+              }}
             />
           </View>
           {checkConfirmPassword ? (
@@ -492,6 +481,7 @@ const SignUpScreen = (props) => {
     </View>
   );
 };
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -524,24 +514,21 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    width: '100%',
-    marginBottom: 5
+    width: "100%",
+    marginBottom: 5,
   },
   eyeIconStyle: {
-    position: 'absolute',
-    right: 40
-
+    position: "absolute",
+    right: 40,
   },
 
   textInputStyle: {
     borderRadius: 20,
-    width: '90%',
-    backgroundColor:'red',
-    alignSelf: 'center',
-    // backgroundColor: "white",
+    width: "90%",
+    alignSelf: "center",
+    backgroundColor: "white",
     padding: 7,
     elevation: 5,
-    // marginHorizontal: 20,
     marginTop: 5,
   },
 
