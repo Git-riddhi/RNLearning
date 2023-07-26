@@ -77,7 +77,7 @@ const LoginScreen = (props) => {
         const showItem = await AsyncStorage.getItem("Registerkey");
         const getItem = JSON.parse(showItem);
 
-        console.log("login getItem in object", getItem);
+        console.log("registeritem get data ==", getItem);
 
         if (getItem == null) {
             Alert.alert("Please register yourself first.");
@@ -111,6 +111,7 @@ const LoginScreen = (props) => {
 
         if (existingEmail.length !== 0) {
             await AsyncStorage.setItem("Loginkey", JSON.stringify(existingEmail));
+
             props.navigation.navigate("Home");
             setEmail("");
             setPassword("");

@@ -19,7 +19,7 @@ const AddProductScreen = (props) => {
     const storeProductData = async () => {
         const productData = {
             Name: name,
-            ID: id,
+            Id: id,
             Address: address,
         };
         console.log("productData===>", productData);
@@ -29,19 +29,31 @@ const AddProductScreen = (props) => {
 
             const oldProductData = await AsyncStorage.getItem("ProductKey");
             console.log('oldProductData', oldProductData);
+
             if (oldProductData !== null) {
+
+                const loginshowItem = await AsyncStorage.getItem("Loginkey")
+                const loginitem = JSON.parse(loginshowItem)
+                console.log('loginitem user Id when product add===>', loginitem[0].userid);
+
+                const userid = loginitem[0].userid
+                productData.userid = userid
+                console.log('productData ===>', productData );
+                
                 const oldData = JSON.parse(oldProductData);
-                const newData = [...oldData, ...productDataArray];
+                const newData = [...oldData, productData];
 
                 console.log('newData', newData);
-                await AsyncStorage.setItem("ProductKey", JSON.stringify(newData));
+
+                await AsyncStorage.setItem("ProductKey", JSON.stringify(newData))
+
             } else {
+                
                 await AsyncStorage.setItem(
                     "ProductKey",
                     JSON.stringify(productDataArray)
                 );
             }
-
             props.navigation.navigate("Home");
             props.route.params.refreshList();
         } catch (err) {
@@ -52,7 +64,7 @@ const AddProductScreen = (props) => {
     useEffect(() => {
         if (props.route.params.item) {
             setName(props.route.params.item.Name);
-            setId(props.route.params.item['ID']);
+            setId(props.route.params.item.Id);
             setAddress(props.route.params.item.Address);
         }
     }, []);
@@ -61,14 +73,14 @@ const AddProductScreen = (props) => {
     // Function for update the data
     const getUpdateData = async () => {
 
-        const updatedata = { Name: name, ID: id, Address: address }
+        const updatedata = { Name: name, Id: id, Address: address }
 
         const getITemFromProductKey = await AsyncStorage.getItem('ProductKey')
         const itemInObject = JSON.parse(getITemFromProductKey)
         console.log('itemInObject', itemInObject);
 
         itemInObject.forEach((item, index) => {
-            if (item['ID'] == updatedata['ID']) {
+            if (item.Id == updatedata.Id) {
                 console.log('condition ');
                 itemInObject[index] = updatedata
                 console.log('updatdata', itemInObject[index]);
@@ -78,7 +90,7 @@ const AddProductScreen = (props) => {
         console.log('updated itemInObject', itemInObject);
         await AsyncStorage.setItem('ProductKey', JSON.stringify(itemInObject))
 
-        console.log('JSON.stringify(updatedata)', JSON.stringify(itemInObject));
+        console.log('JSON.stringify(updatedata)', JSON.stringify(itemInObject))
         props.navigation.navigate('Home')
         props.route.params.refreshList();
 
@@ -94,7 +106,7 @@ const AddProductScreen = (props) => {
                 <Text style={styles.heading}>ADD ITEMS</Text>
                 <View style={styles.firstView}>
                     <TextInput
-                        placeholder="Enter ID"
+                        placeholder="Enter Id"
                         onChangeText={(id) => setId(id)}
                         style={styles.textInputStyle}
                         autoCapitalize="words"
