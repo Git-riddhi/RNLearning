@@ -23,9 +23,9 @@ const SignUpScreen = (props) => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
+  const [userid,setUserid]=useState(1)
   const [isPasswordSecure, setIsPasswordSecure] = useState(true);
   const [isConfirmPasswordSecure, setConfirmIsPasswordSecure] = useState(true);
-  const [isUserAlreadySignup, setIsUserAlreadySignup] = useState(false);
 
   const [checkFirstName, setCheckFirstName] = useState("");
   const [checkLastName, setCheckLastName] = useState("");
@@ -179,7 +179,9 @@ const SignUpScreen = (props) => {
       firstName: firstName,
       lastName: lastName,
       phoneNumber: phoneNumber,
+      userid:userid
     };
+
 
     var alreadyRegisteredUserData = false;
 

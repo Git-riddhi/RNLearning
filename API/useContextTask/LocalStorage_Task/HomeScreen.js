@@ -2,6 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useEffect, useState } from 'react';
 import { Dimensions, ImageBackground, } from 'react-native';
 import { View, StyleSheet, Text, Alert, Image, TouchableOpacity, FlatList } from 'react-native';
+import { log } from 'react-native-reanimated';
 
 const deviceWidth = Dimensions.get("screen").width
 const deviceheight = Dimensions.get("screen").height
@@ -9,14 +10,15 @@ const deviceheight = Dimensions.get("screen").height
 const HomeScreen = (props) => {
 
     // Use states
-    const [output, setOutput] = useState([])
+    const [output, setOutput] = useState()
     const [firstName, setFirstName] = useState('')
     const [refresh, setRefresh] = useState(false)
 
     //Function call
     useEffect(() => {
-        getProductData()
+        // getProductData()
         getFirstNameFromSignup()
+        getProductDataOfUser()
     }, [refresh])
 
     const refreshList = () => {
@@ -25,13 +27,46 @@ const HomeScreen = (props) => {
     }
 
     //  Function for get product data from Productkey of asyncstorage
-    const getProductData = async () => {
-        const showItem = await AsyncStorage.getItem("ProductKey");
-        const getItem = JSON.parse(showItem)
-        console.log('Homepage prodductItem ===>', getItem);
-        setOutput(getItem)
-        setRefresh(false)
+    // const getProductData = async () => {
+    //     const showItem = await AsyncStorage.getItem("ProductKey");
+    //     const getItem = JSON.parse(showItem)
+    //     console.log('Homepage prodductItem ===>', getItem);
+    //     setOutput(getItem)
+    //     setRefresh(false)
+    // }
+
+    const getProductDataOfUser = async () => {
+        try {
+            const productDataAfterLogin = []
+
+            const loginshowItem = await AsyncStorage.getItem("Loginkey")
+            const loginitem = JSON.parse(loginshowItem)
+
+            const productShowItem = await AsyncStorage.getItem('ProductKey')
+            const productitem = JSON.parse(productShowItem)
+
+            console.log('loginitem ===>', loginitem);
+            console.log('productitem ===>', productitem)
+
+            for (let product of productitem) {
+                if (
+                    product?.userid === loginitem?.userid
+                ) {
+                    console.log(' item?.userid === loginitem?.userid==>', product?.userid === loginitem?.userid);
+                    productDataAfterLogin.push(productitem);
+                    setOutput(productitem)  
+                    setRefresh(false)
+                }
+              
+            }
+            console.log('productDataAfterLogin ===>', productDataAfterLogin);
+            console.log('productitem ===>', productitem)
+         
+        } catch (error) {
+            console.log('error ===>', error);
+        }
     }
+
 
     // Function for get firstname from Loginkey of asyncstorage
     const getFirstNameFromSignup = async () => {
@@ -42,7 +77,7 @@ const HomeScreen = (props) => {
             if (showItem !== null) {
                 const result = JSON.parse(showItem)
                 setFirstName(result[0].firstName)
-                // console.log("user firstname ===>", result[0].firstName)
+                setRefresh(false)
                 return showItem;
             }
         } catch (error) {
@@ -64,9 +99,6 @@ const HomeScreen = (props) => {
 
     }
 
-
-    // Function for show update data
-    
 
     // Function of delete the data
     const deleteData = (index) => {
@@ -95,7 +127,7 @@ const HomeScreen = (props) => {
         props.navigation.navigate('AddProduct',
             {
                 item,
-                refreshList:refreshList
+                refreshList: refreshList
                 //  updateEvent: updateEvent 
             }
         )
@@ -109,7 +141,7 @@ const HomeScreen = (props) => {
         <View style={styles.mainView}>
 
             <View>
-                <Text style={styles.textStyle}> ID : {item.ID}</Text>
+                <Text style={styles.textStyle}> ID : {item.Id}</Text>
                 <Text style={styles.textStyle}> Name : {item.Name}</Text>
                 <Text style={styles.textStyle}> Adress : {item.Address}</Text>
 
