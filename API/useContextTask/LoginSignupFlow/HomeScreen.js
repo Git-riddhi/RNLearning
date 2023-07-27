@@ -1,6 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import React, { useEffect, useState } from "react";
-import { Dimensions, ImageBackground } from "react-native";
+import { useFocusEffect } from "@react-navigation/native";
+import React, { useCallback, useEffect, useState } from "react";
+import { BackHandler, Dimensions, ImageBackground } from "react-native";
 import {
     View,
     StyleSheet,
@@ -10,7 +11,6 @@ import {
     TouchableOpacity,
     FlatList,
 } from "react-native";
-import { log } from "react-native-reanimated";
 
 const deviceWidth = Dimensions.get("screen").width;
 const deviceheight = Dimensions.get("screen").height;
@@ -21,17 +21,34 @@ const HomeScreen = (props) => {
     const [firstName, setFirstName] = useState("");
     const [refresh, setRefresh] = useState(false);
 
-    //Function call
-    useEffect(() => {
-        // getProductData()
-        getFirstNameFromSignup();
-        getProductDataOfUser();
-    }, [refresh]);
 
-    const refreshList = () => {
+    useEffect(() => {
+        BackHandler.addEventListener("hardwareBackPress", handleBackButtonClick);
+        return () => {
+            BackHandler.removeEventListener("hardwareBackPress", handleBackButtonClick);
+        };
+    }, []);
+
+
+    const handleBackButtonClick = () => {
+        props.navigation.pop(2)
+    }
+
+
+    useFocusEffect(
+        React.useCallback(() => {
+            // getProductData()
+            getFirstNameFromSignup();
+            getProductDataOfUser();
+        }, []));
+
+    const refreshList = useCallback(() => {
         console.log("refreshList function call =====");
-        setRefresh(true);
-    };
+        setRefresh(!refresh);
+        getProductDataOfUser();
+
+    })
+
 
     //  Function for get product data from Productkey of asyncstorage
     // const getProductData = async () => {
@@ -52,24 +69,15 @@ const HomeScreen = (props) => {
             const productShowItem = await AsyncStorage.getItem("ProductKey");
             const productitem = JSON.parse(productShowItem);
 
-            console.log("loginitem ===>", loginitem);
-            console.log("productitem ===>", productitem);
-
             for (let product of productitem) {
                 if (product?.userid == loginitem[0]?.userid) {
-                    console.log(
-                        " item?.userid === loginitem?.userid==>",
-                        product?.userid === loginitem?.userid
-                    );
                     productDataAfterLogin.push(product);
-                    console.log(" productDataAfterLogin==>", productDataAfterLogin);
                 }
             }
             setOutput(productDataAfterLogin);
-            setRefresh(false);
-            console.log("productDataAfterLogin ===>", productDataAfterLogin);
+            setRefresh(false)
         } catch (error) {
-            console.log("error ===>", error);
+            console.log("show product error ===>", error);
         }
     };
 
@@ -77,7 +85,6 @@ const HomeScreen = (props) => {
     const getFirstNameFromSignup = async () => {
         try {
             const showItem = await AsyncStorage.getItem("Loginkey");
-            // console.log('Home showitem ===>', showItem);
 
             if (showItem !== null) {
                 const result = JSON.parse(showItem);

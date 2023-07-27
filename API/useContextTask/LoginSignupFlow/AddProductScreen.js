@@ -30,6 +30,7 @@ const AddProductScreen = (props) => {
             const oldProductData = await AsyncStorage.getItem("ProductKey");
             console.log('oldProductData', oldProductData);
 
+
             if (oldProductData !== null) {
 
                 const loginshowItem = await AsyncStorage.getItem("Loginkey")
@@ -40,6 +41,7 @@ const AddProductScreen = (props) => {
                 productData.userid = userid
                 console.log('productData ===>', productData);
 
+
                 const oldData = JSON.parse(oldProductData);
                 const newData = [...oldData, productData];
 
@@ -48,11 +50,20 @@ const AddProductScreen = (props) => {
                 await AsyncStorage.setItem("ProductKey", JSON.stringify(newData))
 
             } else {
+
+                const loginshowItem = await AsyncStorage.getItem("Loginkey")
+                const loginitem = JSON.parse(loginshowItem)
+                console.log('loginitem user Id when product add===>', loginitem[0].userid);
+
+                const userid = loginitem[0].userid
+                productData.userid = userid
+                console.log('productData ===>', productDataArray);
+
                 await AsyncStorage.setItem(
                     "ProductKey",
                     JSON.stringify(productDataArray)
                 );
-                props.route.params.refreshList();
+
             }
             props.navigation.navigate("Home");
             props.route.params.refreshList();

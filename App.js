@@ -1,11 +1,13 @@
 import React from 'react'
-import Navigation from './API/LoginRESTAPI/AuthNavigator'
-import { LoginProvider } from './API/useContextTask/DataContext'
-import StackNavigator from './API/useContextTask/LocalStorage_Task/StackNavigator'
+import { NavigationContainer } from '@react-navigation/native'
+import AppRoutes from './API/useContextTask/LoginSignupFlow/AppRoutes'
 
 const App = () => {
   return (
-      <StackNavigator />
+
+    <NavigationContainer>
+     <AppRoutes/>
+    </NavigationContainer>
 
   )
 
