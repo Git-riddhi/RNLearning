@@ -16,8 +16,8 @@ const StackNavigator = () => {
         <NavigationContainer>
             <Stack.Navigator
                 initialRouteName="Splash"
-                screenOptions={{ headerShown: false }}
-            >
+                screenOptions={{ headerShown: false }} >
+                    
                 <Stack.Screen name="Splash" component={SplashScreen} />
                 <Stack.Screen name="Home" component={HomeScreen} />
                 <Stack.Screen name="Login" component={LoginScreen} />

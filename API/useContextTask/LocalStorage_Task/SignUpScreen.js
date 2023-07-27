@@ -23,7 +23,6 @@ const SignUpScreen = (props) => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
-  const [userid,setUserid]=useState(1)
   const [isPasswordSecure, setIsPasswordSecure] = useState(true);
   const [isConfirmPasswordSecure, setConfirmIsPasswordSecure] = useState(true);
 
@@ -170,6 +169,12 @@ const SignUpScreen = (props) => {
     return isValid;
   };
 
+  const orderId = () => {
+    return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
+
+  };
+
+
   // Function for Data store in Localstorage
   const storeData = async () => {
     const infoData = {
@@ -179,9 +184,8 @@ const SignUpScreen = (props) => {
       firstName: firstName,
       lastName: lastName,
       phoneNumber: phoneNumber,
-      userid:userid
+      'userid': orderId()
     };
-
 
     var alreadyRegisteredUserData = false;
 
@@ -208,7 +212,7 @@ const SignUpScreen = (props) => {
         //     dataobj?.phoneNumber === infoData?.phoneNumber
         //   ) {
         //     alreadyRegisteredUserData = true;
-           
+
         //   }
         // })
 
@@ -228,6 +232,9 @@ const SignUpScreen = (props) => {
           const updatedValue = [...existingValue, infoData];
 
           console.log("updatedValue", updatedValue);
+
+
+
           AsyncStorage.setItem("Registerkey", JSON.stringify(updatedValue));
           Alert.alert("Signup", "SignUp successfull", [
             {
@@ -236,6 +243,7 @@ const SignUpScreen = (props) => {
             },
           ]);
         }
+
       }
     } catch (err) {
       console.log("error ===>", err);

@@ -5,7 +5,6 @@ import { View, Text, StyleSheet } from 'react-native';
 
 const SplashScreen = (props) => {
 
-
     useEffect(() => {
         getData()
     }, [])
@@ -14,11 +13,8 @@ const SplashScreen = (props) => {
         const getItem = await AsyncStorage.getItem('Loginkey')
         console.log("splash get item login key  ==else==>", getItem);
 
-
         if (getItem === null) {
-
             console.log("yes null");
-
             setTimeout(() => {
                 props.navigation.navigate("Login")
             }, 1000);
@@ -27,8 +23,6 @@ const SplashScreen = (props) => {
             setTimeout(() => {
                 props.navigation.navigate("Home")
             }, 1000);
-            
-
         }
     };
 
@@ -46,7 +40,7 @@ const styles = StyleSheet.create({
     },
     text: {
         fontSize: 30,
-        color:'orange',
+        color: 'orange',
         fontWeight: 'bold'
     }
 })
