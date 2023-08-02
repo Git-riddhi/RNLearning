@@ -15,7 +15,7 @@ import {
   ActivityIndicator,
 } from 'react-native';
 
-const FlatListWithPagination = () => {
+const FlatListWithOffset = () => {
   const [loading, setLoading] = useState(true);
   const [dataSource, setDataSource] = useState([]);
   const [offset, setOffset] = useState(1);
@@ -136,4 +136,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default FlatListWithPagination;
+export default FlatListWithOffset;
