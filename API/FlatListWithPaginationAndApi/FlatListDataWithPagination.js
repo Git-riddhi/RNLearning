@@ -22,7 +22,7 @@ import {
     ActivityIndicator,
 } from "react-native";
 
-const FlatListDataWithRefresh = () => {
+const FlatListDataWithPagination = () => {
     const [refreshing, setRefreshing] = useState(false);
     const [userData, setUserData] = useState([]);
     // const [loading, setLoading] = useState(false)
@@ -33,10 +33,10 @@ const FlatListDataWithRefresh = () => {
     }, [page]);
 
     const loadUserData = () => {
-        console.log(
-            "api call===>",
-            `https://randomuser.me/api/?results=15&page=${page}`
-        );
+        // console.log(
+        //     "api call===>",
+        //     `https://randomuser.me/api/?results=15&page=${page}`
+        // );
 
         fetch(
             `https://randomuser.me/api/?results=15&page=${page}`,
@@ -70,12 +70,10 @@ const FlatListDataWithRefresh = () => {
 
                 if (page === 1) {
                     setUserData(responseJson.results);
-                    console.log('if condition ====', responseJson.results.length);
                     setRefreshing(false);
                 } else {
                     var newdata = userData.concat(responseJson.results);
                     setUserData(newdata);
-                    console.log('newdata ===>', newdata);
                     setRefreshing(false);
                 }
 
@@ -134,7 +132,7 @@ const FlatListDataWithRefresh = () => {
                 <Text style={styles.headingStyle}>User's Data</Text>
                 <FlatList
                     data={userData}
-                    keyExtractor={(item,index) => item+index}
+                    keyExtractor={(item, index) => item + index}
                     ItemSeparatorComponent={
                         <View style={styles.itemSeparatorComponentStyle} />
                     }
@@ -210,4 +208,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default FlatListDataWithRefresh;
+export default FlatListDataWithPagination;

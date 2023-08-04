@@ -16,7 +16,7 @@ import RNFetchBlob from 'rn-fetch-blob';
 
 const ImageDownloading = () => {
     const REMOTE_IMAGE_PATH =
-        'https://homepages.cae.wisc.edu/~ece533/images/cat.png'
+        'https://images.unsplash.com/photo-1575936123452-b67c3203c357?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8aW1hZ2V8ZW58MHx8MHx8fDA%3D&w=1000&q=80'
     const checkPermission = async () => {
 
         // Function to check the platform

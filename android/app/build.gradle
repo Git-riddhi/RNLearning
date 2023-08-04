@@ -157,6 +157,7 @@ dependencies {
     //  implementation 'com.google.firebase:firebase-auth'
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.0.0")
     implementation project(':react-native-camera')
+     implementation project(':react-native-fs')
 
    
 

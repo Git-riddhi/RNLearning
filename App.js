@@ -1,12 +1,11 @@
 import React from 'react'
-import FlatListDataWithRefresh from './API/FlatListWithPullRefresh/FlatListDataWithRefresh'
-import ImageDownloading from './API/ImageDownloading'
+import ArrayStoreTask from './API/ArrayStoreTask'
 
 
 const App = () => {
   return (
 
-  <FlatListDataWithRefresh/>
+  <ArrayStoreTask/>
 
   )
 
