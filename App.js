@@ -1,13 +1,11 @@
 import React from 'react'
-import FlatListDataWithRefresh from './API/FlatListWithPullRefresh/FlatListDataWithPagination'
-import ImageDownloading from './API/ImageDownloading'
-import FlatListDataWithPagination from './API/FlatListWithPullRefresh/FlatListDataWithPagination'
+import ArrayStoreTask from './API/ArrayStoreTask'
 
 
 const App = () => {
   return (
 
-  <FlatListDataWithPagination/>
+  <ArrayStoreTask/>
 
   )
 

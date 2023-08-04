@@ -33,10 +33,10 @@ const FlatListDataWithPagination = () => {
     }, [page]);
 
     const loadUserData = () => {
-        console.log(
-            "api call===>",
-            `https://randomuser.me/api/?results=15&page=${page}`
-        );
+        // console.log(
+        //     "api call===>",
+        //     `https://randomuser.me/api/?results=15&page=${page}`
+        // );
 
         fetch(
             `https://randomuser.me/api/?results=15&page=${page}`,
