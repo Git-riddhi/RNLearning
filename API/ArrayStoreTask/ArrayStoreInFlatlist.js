@@ -53,7 +53,7 @@ const ArrayStoreInFlatlist = () => {
 
             <View style={styles.headingContainer} >
 
-                {categories.category.map((category) => (
+                {categories.map((category) => (
                     <TouchableOpacity
                         key={category}
                         onPress={() => handleCategorySelect(category)}
