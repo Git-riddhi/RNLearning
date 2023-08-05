@@ -1,32 +1,32 @@
-import React, { useState } from "react";
-import { View, Text, FlatList, TouchableOpacity, StyleSheet, ScrollView } from "react-native";
+import React, { useEffect, useState } from "react";
+import {
+    View,
+    Text,
+    FlatList,
+    TouchableOpacity,
+    StyleSheet,
+    ScrollView,
+} from "react-native";
 import { categoryData } from "../../lib/GlobalConstant";
 
-
 const ArrayStoreTask = () => {
-
     const [selectedCategory, setSelectedCategory] = useState();
     const [filteredItems, setFilteredItems] = useState(categoryData);
 
-    const handleCategorySelect = (category) => {
-        if (category === "All") {
-            setFilteredItems(categoryData);
-            // console.log('filteredItems ===>', filteredItems);
-        } else {
-            const filteredData = categoryData.filter((item) => item.category === category);
-            // console.log('filtered =====>', filteredData);
+    const [uniqueKeyArray, setUniqueKeyArray] = useState();
+    const [categorys, setCategorys] = useState();
 
-            setFilteredItems(filteredData);
-        }
+    const handleCategorySelect = (category) => {
+        const filteredData = categorys[category];
+        setFilteredItems(filteredData);
         setSelectedCategory(category);
     };
-
 
     const renderItem = ({ item, index }) => {
         return (
             <View style={{ padding: 10 }}>
                 <Text style={styles.textStyle}>Category ID : {item.categoryID}</Text>
-                <Text style={styles.textStyle}>Category :  {item.category}</Text>
+                <Text style={styles.textStyle}>Category : {item.category}</Text>
                 <Text style={styles.textStyle}>Internal ID : {item.internalID}</Text>
                 <Text style={styles.textStyle}>Question: {item.question}</Text>
                 <Text style={styles.textStyle}>Answer: {item.answer}</Text>
@@ -34,69 +34,60 @@ const ArrayStoreTask = () => {
         );
     };
 
+    useEffect(() => {
+        getUniqueCategoryObjectArray(categoryData);
+    }, []);
 
+    const getUniqueCategoryObjectArray = (categoryData) => {
+        const uniqueCategoriesKeyArray = categoryData.reduce((acc, obj) => {
+            if (!acc.includes(obj.category)) {
+                acc.push(obj.category);
+            }
+            return acc;
+        }, []);
 
-    // const categories = JSON.parse(categoryData)
-    // console.log('categories in object', categories);
-    // const arr = [
-    //     {
-    //         sid: 123,
-    //         name: 'aaa'
-    //     },
-    //     {
-    //         sid: 456,
-    //         name: 'bbb'
-    //     },
-    //     {
-    //         sid: 789,
-    //         name: 'ccc'
-    //     }
-    // ];
+        const resultObj = {};
+        uniqueCategoriesKeyArray.map((item) => {
+            resultObj[item] = [];
+            return;
+        });
 
-    const result = filteredItems.reduce((obj, cur) => (
-        { ...obj, [cur.category]: cur }
-        // console.log('object ----', cur)
-        )
-        , {}
-        )
-   
-    
-   
-    // ["All", "3G, 4G, LTE", "eSIM", "Tarife", "Kundenportal", "Freischalten",  "Allgemeines"];
+        categoryData.map((item) => {
+            const keyValue = item.category;
+            resultObj[keyValue].push(item);
+            return;
+        });
 
-    // const result = categoryData.reduce((obj, arr) => {
-    //     arr.forEach((cur) => {
-    //         obj[cur.category] = cur;
-    //     });
-    //     console.log('categories in object', result);
-    //     return obj;
-    // }, {});
+        setUniqueKeyArray(uniqueCategoriesKeyArray);
+        setCategorys(resultObj);
+    };
+    console.log("uniqueKeyArray", uniqueKeyArray);
 
     return (
         <View style={styles.mainContainer}>
-
-            <View style={styles.headingContainer} >
-
-                {Object.values(result).map((item) => (
-                    // <ScrollView horizontal={true} style={{flex:1}} >
-
-                  
-                    <TouchableOpacity
-                        key={item.category}
-                        onPress={() => handleCategorySelect(item.category)}
-                        style={{ margin: 10, padding:10}}
-                    >
-                        <Text
-                            style={[styles.heading, {
-                                color: item === selectedCategory ? "blue" : "black"
-                            }
-                            ]}
-                        >
-                            {item.category}
-                        </Text>
-                    </TouchableOpacity>
-                    // </ScrollView>
-                ))}
+            <View style={styles.headingContainer}>
+                <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                    {uniqueKeyArray &&
+                        uniqueKeyArray.map((categoryDataKey) => (
+                            <TouchableOpacity
+                                key={categoryDataKey}
+                                onPress={() => handleCategorySelect(categoryDataKey)}
+                                style={styles.touchableView}
+                            >
+                                <Text
+                                    style={[
+                                        styles.heading,
+                                        {
+                                            color:
+                                                categoryDataKey === selectedCategory ? "blue" : "black",
+                                        },
+                                    ]}
+                                >
+                                    {categoryDataKey}
+                                </Text>
+                            </TouchableOpacity>
+                        ))}
+                </ScrollView>
             </View>
 
             <FlatList
@@ -109,27 +100,31 @@ const ArrayStoreTask = () => {
             />
         </View>
     );
-
 };
 const styles = StyleSheet.create({
     mainContainer: {
-        flex: 1
+        flex: 1,
     },
     textStyle: {
         fontSize: 15,
         color: "black",
     },
+    touchableView: {
+        padding: 10,
+        width: 150,
+    },
     heading: {
         fontSize: 15,
-        fontWeight: 'bold',
-        // width:'40%'
-        // marginHorizontal:20
+        fontWeight: "bold",
+        backgroundColor: "lightgrey",
+        borderRadius: 20,
+        textAlign: "center",
+        padding: 10,
     },
     headingContainer: {
         flexDirection: "row",
         justifyContent: "space-around",
         paddingVertical: 10,
-        // marginHorizontal:20
     },
 
     itemSeparatorComponentStyle: {
@@ -137,6 +132,6 @@ const styles = StyleSheet.create({
         width: "100%",
         backgroundColor: "grey",
     },
-})
+});
 
 export default ArrayStoreTask;
