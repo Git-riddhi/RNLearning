@@ -1,11 +1,12 @@
 import React from 'react'
 import NavigatorScreen from './API/QuizApp/NavigatorScreen'
+import ArrayStoreTask from './API/ArrayStoreTask'
 
 
 const App = () => {
   return (
 
-  <NavigatorScreen/>
+  <ArrayStoreTask/>
 
   )
 
