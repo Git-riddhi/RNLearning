@@ -43,20 +43,26 @@ const ArrayStoreTask = () => {
             if (!acc.includes(obj.category)) {
                 acc.push(obj.category);
             }
+            console.log('accumulator ---', acc);
             return acc;
         }, []);
+        console.log('uniqueCategoriesKeyArray --', uniqueCategoriesKeyArray);
 
         const resultObj = {};
         uniqueCategoriesKeyArray.map((item) => {
             resultObj[item] = [];
             return;
         });
+        console.log('resultObj --', resultObj);
+
 
         categoryData.map((item) => {
             const keyValue = item.category;
             resultObj[keyValue].push(item);
             return;
         });
+        console.log('after key resultObj --', resultObj);
+
 
         setUniqueKeyArray(uniqueCategoriesKeyArray);
         setCategorys(resultObj);

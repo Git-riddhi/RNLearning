@@ -1,152 +1,126 @@
-import React, { useState } from "react";
-import { View, Text, Button, StyleSheet, TouchableOpacity } from "react-native";
+import React, { useEffect, useState } from "react";
+import { View, Text, Button, StyleSheet, TouchableOpacity, Alert } from "react-native";
+import { quizData } from "./QuizData";
 
-const QuizScreen = () => {
+import { BackHandler } from 'react-native';
+
+
+const QuizScreen = (props) => {
+
   const [currentQuestion, setCurrentQuestion] = useState(0);
-  const [score, setScore] = useState(0);
-  const [selectedAnswer, setSelectedAnswer] = useState(false)
-  const [answers, setAnswers] = useState([]);
+  const [selectedAnswers, setSelectedAnswers] = useState({});
 
-  const quizData = [
-    {
-      question: "What is the capital of France?",
-      options: ["Paris", "Madrid", "London", "Berlin"],
-      correctAnswer: "Paris",
-    },
-    {
-      question: "What is the largest planet in our solar system?",
-      options: ["Venus", "Jupiter", "Mars", "Saturn"],
-      correctAnswer: "Jupiter",
-    },
-    {
-      question: "What is the smallest country in the world?",
-      options: ["Vatican City", "Monaco", "Liechtenstein", "San Marino"],
-      correctAnswer: "Vatican City",
-    },
-    {
-      question: "What is the name of first British to visit India?",
-      options: ["Hawkins", "Norway", "Devid", "George Bush"],
-      correctAnswer: "Hawkins",
-    },
-    {
-      question: "What is the name of the first university of India?",
-      options: [
-        "Nalanda University",
-        "Taxshila University",
-        "Jawahar University",
-        "Dronacharya University",
-      ],
-      correctAnswer: "Nalanda University",
-    },
-    {
-      question: "What is the name of the first deputy Prime Minister of India?",
-      options: [
-        "Sardar Vallabh Bhai Patel",
-        "R.N. Shukla",
-        "V.R. Gill",
-        "D.B. Mahawar",
-      ],
-      correctAnswer: "Sardar Vallabh Bhai Patel",
-    },
-    {
-      question: "What is the name of first Indian Pilot?",
-      options: [
-        "J.R.D. Tata in 1929",
-        "R.N. Shukla",
-        "V.R. Gill",
-        "D.B. Mahawar",
-      ],
-      correctAnswer: "J.R.D. Tata in 1929",
-    },
-    {
-      question: "What is the name of first Indian to win Nobel Prize?",
-      options: [
-        "Rabindranath Tagore",
-        "R.N. Shukla",
-        "V.R. Gill",
-        "D.B. Mahawar",
-      ],
-      correctAnswer: "Rabindranath Tagore",
-    },
-    {
-      question: "Total number of oceans in the World is..",
-      options: ["3", "5", "7", "12"],
-      correctAnswer: "5",
-    },
-    {
-      question: "What is the First Indian recipient of Oscar Award?",
-      options: [
-        "Bhanu Athaiya",
-        "R.N. Shukla",
-        "Dr. Zakir Hussain",
-        "D.B. Mahawar",
-      ],
-      correctAnswer: "Bhanu Athaiya",
-    },
-  ];
 
-  const goToPreviousQuestion = () => {
-    setCurrentQuestion(currentQuestion - 1);
-    setSelectedAnswer(answers[currentQuestion - 1]);
+  const handleBackButtonClick = () => {
+    Alert.alert("Are You Sure ?", "You want to quit ?", [
+      {
+        text: "Yes",
+        onPress: () => {
+          props.navigation.goBack()
+        },
+      },
+      { text: "No", onPress: () => console.log("Okay"), style: "cancel" },
+    ]);
+    console.log('backhandler');
+    return true;
+  }
+
+  useEffect(() => {
+    BackHandler.addEventListener('hardwareBackPress', handleBackButtonClick);
+    return () => {
+      BackHandler.removeEventListener('hardwareBackPress', handleBackButtonClick);
+    };
+  }, []);
+
+  const handleAnswerSelection = (questionIndex, selectedOption) => {
+    setSelectedAnswers((prevAnswers) => ({
+      ...prevAnswers,
+      [questionIndex]: selectedOption,
+    }));
+
+    console.log('selectedOption ===>', selectedOption);
+
   };
 
-  const handleAnswerSelection = (answer) => {
-    setSelectedAnswer(answer);
-  };
-
-  const goToNextQuestion = () => {
-    const isCorrect = quizData[currentQuestion].correctAnswer === selectedAnswer;
-    if (selectedAnswer && isCorrect) {
-      setScore(score + 4)
-    } else if (!selectedAnswer) {
-      setScore(score)
-    }
-    else {
-      setScore(score - 1)
-    }
-    setAnswers([...answers, selectedAnswer]);
-    setSelectedAnswer('');
+  const handleNextQuestion = () => {
     setCurrentQuestion((prevQuestion) => prevQuestion + 1);
   };
 
-  const handleRestartQuiz = () => {
-    setCurrentQuestion(0);
-    setScore(0);
+  const handlePreviousQuestion = () => {
+    setCurrentQuestion((prevQuestion) => prevQuestion - 1);
   };
 
+  const handleResetQuiz = () => {
+    setCurrentQuestion(0);
+    setSelectedAnswers(0)
+  };
+
+  const handleRestartQuiz = () => {
+    props.navigation.navigate("Welcome")
+  };
+
+
+  const calculateScore = () => {
+    let score = 0;
+    quizData.forEach((question, index) => {
+      if (selectedAnswers[index] === question.correctAnswer) {
+        // console.log('Correct Answer');
+        score += 4;
+        //Addition assignment (+=)
+      } else if (selectedAnswers[index]) {
+        // console.log('Wrong Answer');
+        score -= 1;
+      }
+    });
+    console.log('score ====>', score);
+    return score;
+  };
+
+
+  // const Score = calculateScore();
+
   if (currentQuestion >= quizData.length) {
+
+    const Score = calculateScore();
     return (
-      <View
-        style={{
-          flex: 1,
-          alignItems: "center",
-          justifyContent: "center",
-          marginVertical: 40,
-          marginRight: 15,
-        }}
-      >
-        <Text style={{ fontSize: 20, marginBottom: 20, color: "grey" }}>
-          Quiz Completed! Your Score: {score}
-        </Text>
-        <Button title="Restart Quiz" onPress={handleRestartQuiz} />
+      <View style={styles.resultView}>
+        <Text style={styles.resultText}>Quiz completed!</Text>
+        <Text style={styles.resultText}>Your score : {Score}</Text>
+        <View style={styles.restartButtonView}>
+          <TouchableOpacity
+            onPress={handleRestartQuiz}
+            style={styles.navigationButton}
+          >
+            <Text style={styles.navigationButtonText}>Back To Quiz</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     );
   }
 
+  const currentQuestionData = quizData[currentQuestion];
+  const isCorrect = selectedAnswers[currentQuestion] === quizData[currentQuestion].correctAnswer;
+
   return (
     <View style={styles.mainContainer}>
+
+      <Text
+        style={styles.questionIndex}>
+        Questions :{' ' + currentQuestion + '/' + quizData.length}
+      </Text>
 
       <Text style={styles.textStyle}>
         {quizData[currentQuestion].question}
       </Text>
 
-      {quizData[currentQuestion].options.map((option, index) => (
+      {currentQuestionData.options.map((option, index) => (
+
         <TouchableOpacity
           key={index}
-          onPress={() => handleAnswerSelection(option)}
+          onPress={() => handleAnswerSelection(currentQuestion, option)}
           style={[styles.optionButton,
           {
-            backgroundColor: selectedAnswer === option ? 'green' : 'lightgrey'
+            backgroundColor: selectedAnswers[currentQuestion] === option ? (isCorrect ? 'green' : 'red') : 'lightgrey',
           }
           ]}
         >
@@ -157,7 +131,7 @@ const QuizScreen = () => {
       <View style={styles.navigationButtonView}>
 
         <TouchableOpacity
-          onPress={goToPreviousQuestion}
+          onPress={handlePreviousQuestion}
           disabled={currentQuestion === 0}
           style={[
             styles.navigationButton,
@@ -168,19 +142,24 @@ const QuizScreen = () => {
         </TouchableOpacity>
 
         <TouchableOpacity
-          onPress={goToNextQuestion}
-          // disabled={currentQuestion === quizData.length - 1}
+          onPress={handleResetQuiz}
           style={[
             styles.navigationButton,
-            // { opacity: currentQuestion === quizData.length - 1 ? 0.5 : 1 },
           ]}
         >
-          {/* {currentQuestion === quizData.length ? <Text style={styles.navigationButtonText}>Done</Text> : */}
-            <Text style={styles.navigationButtonText}>Next</Text>
-            {/*  } */}
+          <Text style={styles.navigationButtonText}>Reset</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          onPress={handleNextQuestion}
+          style={[
+            styles.navigationButton,
+          ]}
+        >
+          <Text style={styles.navigationButtonText}>{currentQuestion < quizData.length - 1 ? 'Next' : 'Submit'}</Text>
         </TouchableOpacity>
       </View>
-      <Text
+      {/* <Text
         style={{
           color: "black",
           fontSize: 15,
@@ -188,14 +167,22 @@ const QuizScreen = () => {
           textAlign: "center",
         }}
       >
-        Score: {score}
-      </Text>
+        Score: {Score}
+      </Text> */}
     </View>
   );
 };
 const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
+  },
+  questionIndex: {
+    fontSize: 17,
+    fontWeight: '600',
+    color: 'black',
+    textAlign: 'right',
+    marginRight: 10,
+    marginTop: 10
   },
   textStyle: {
     marginLeft: 10,
@@ -208,11 +195,9 @@ const styles = StyleSheet.create({
     padding: 10,
     margin: 5,
     borderRadius: 5,
-    backgroundColor: 'lightgrey'
   },
   optionText: {
     fontSize: 16,
-    // color: 'white',
     color: 'black'
   },
   navigationButtonView: {
@@ -221,18 +206,35 @@ const styles = StyleSheet.create({
     marginTop: 50,
     width: "100%",
   },
+
   navigationButton: {
     backgroundColor: "#007AFF",
     padding: 10,
     borderRadius: 5,
     flex: 1,
-    marginHorizontal: 30,
+    marginHorizontal: 10,
   },
   navigationButtonText: {
     color: "white",
     textAlign: "center",
     fontSize: 16,
   },
+  resultView: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    marginVertical: 40,
+    marginRight: 15,
+  },
+  resultText: {
+    fontSize: 20,
+    marginBottom: 20,
+    color: "black"
+  },
+  restartButtonView: {
+    height: 40,
+    width: "40%",
+  }
 });
 
 export default QuizScreen;
