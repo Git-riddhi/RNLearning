@@ -1,12 +1,12 @@
 import React from 'react'
-import NavigatorScreen from './API/QuizApp/NavigatorScreen'
-import ArrayStoreTask from './API/ArrayStoreTask'
+
+import NavigatorScreenForImage from './API/ImagePicker/ImagePickerApp/NavigatorScreenForImage'
 
 
 const App = () => {
   return (
 
-  <ArrayStoreTask/>
+  <NavigatorScreenForImage/>
 
   )
 
