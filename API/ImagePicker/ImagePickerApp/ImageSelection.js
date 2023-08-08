@@ -7,10 +7,28 @@ import IconThree from "react-native-vector-icons/AntDesign";
 import IconFour from "react-native-vector-icons/MaterialIcons";
 import RNFetchBlob from 'rn-fetch-blob';
 import { Button, Dialog } from 'react-native-paper';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { log } from 'react-native-reanimated';
 
 const ImageSelection = (props) => {
     const [images, setImages] = useState([]);
-    const [showModal, setShowModal] = useState(false);
+    // const [showModal, setShowModal] = useState(false);
+    const [selectedImage, setSelectedImage] = useState(null);
+    const [isModalVisible, setModalVisible] = useState(false);
+    const [draftImage, setDraftImage] = useState(null);
+    const [backmodalVisible, setBackModalVisible] = useState(false)
+
+    // useEffect(() => {
+    //     const backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
+    //         if (backmodalVisible) {
+    //             setBackModalVisible(false);
+    //             return true;
+    //         }
+    //         return false;
+    //     });
+
+    //     return () => backHandler.remove();
+    // }, [backmodalVisible]);
 
 
     const handleBackButtonClick = () => {
@@ -19,15 +37,21 @@ const ImageSelection = (props) => {
             {
                 text: "Save As Draft",
                 onPress: () => {
-                    // after save navigate in previous screen
+                   if( saveImageAsDraft()){
                     props.navigation.navigate("ImageChooser")
+                   }
+                    // after save navigate in previous screen
+                    
                 },
             },
             {
-                text: "GoBack", onPress: () =>
+                text: "GoBack", onPress: () =>{
+                    if(clearDraft()){
+                        props.navigation.navigate("ImageChooser")
+                    }
                     // Data should be delete when click on go back.
-                    props.navigation.navigate("ImageChooser"),
-                style: "cancel"
+                  
+              }
             },
             { text: "Cancel", onPress: () => console.log("Okay"), style: "cancel" },
 
@@ -46,14 +70,14 @@ const ImageSelection = (props) => {
 
     const handleImagePicker = async () => {
         try {
-            const selectedImage = await ImagePicker.openPicker({
+            const image = await ImagePicker.openPicker({
                 mediaType: 'photo',
                 cropping: true,
             });
 
-            setImages([...images, selectedImage]);
+            setImages([...images, image]);
             console.log('images ====>', images);
-            console.log('selected image ====>', selectedImage);
+            console.log('selected image ====>', image);
         } catch (error) {
             console.log(error);
         }
@@ -62,7 +86,7 @@ const ImageSelection = (props) => {
     const renderBox = ({ index, item }) => {
         if (item.uri) {
             return (
-                <TouchableOpacity onPress={() => { setShowModal(!showModal); }} >
+                <TouchableOpacity onPress={() => { openImageModal(item) }} >
                     <Image source={{ uri: item.uri }} style={styles.image} />
                 </TouchableOpacity>)
         } else {
@@ -73,34 +97,86 @@ const ImageSelection = (props) => {
             );
         }
     };
-    const downloadImage = async ({ item }) => {
-        const url = images[index];
-        const imagePath = `${RNFetchBlob.fs.dirs.DownloadDir}/image.jpg`;
+    // const downloadImage = async ({ item }) => {
+    //     const url = images[index];
+    //     const imagePath = `${RNFetchBlob.fs.dirs.DownloadDir}/image.jpg`;
 
+    //     try {
+    //         // await createNotificationChannel();
+    //         const response = await RNFetchBlob.config({
+    //             fileCache: true,
+    //             path: imagePath,
+    //             addAndroidDownloads: {
+    //                 useDownloadManager: true,
+    //                 notification: true,
+    //                 mediaScannable: true,
+    //                 title: 'Image Download',
+    //                 description: 'Downloading image...',
+    //                 mime: 'image/jpeg',
+    //                 path: imagePath,
+    //             },
+    //             indicator: true,
+
+    //         }).fetch('GET', url);
+
+
+    //     } catch (error) {
+    //         console.error('Image download error:', error);
+    //     }
+    // };
+
+    const downloadImage = async () => {
         try {
-            // await createNotificationChannel();
             const response = await RNFetchBlob.config({
                 fileCache: true,
-                path: imagePath,
-                addAndroidDownloads: {
-                    useDownloadManager: true,
-                    notification: true,
-                    mediaScannable: true,
-                    title: 'Image Download',
-                    description: 'Downloading image...',
-                    mime: 'image/jpeg',
-                    path: imagePath,
-                },
-                indicator: true,
+                appendExt: 'png',
+            }).fetch('GET', selectedImage.path);
 
-            }).fetch('GET', url);
-
-
+            const downloadDir = response.path();
+            console.log('Image downloaded to:', downloadDir);
         } catch (error) {
-            console.error('Image download error:', error);
+            console.log('Error downloading image:', error);
         }
     };
 
+
+    const openImageModal = (image) => {
+        setSelectedImage(image);
+        setModalVisible(true);
+    };
+
+    // const saveDraft = () => {
+    //     if (selectedImage) {
+    //         setDraftImage(selectedImage);
+    //         setModalVisible(false);
+          
+    //     }
+       
+    // };
+
+    // const goBack = () => {
+    //     setDraftImage(null);
+    //     setModalVisible(false);
+    // };
+
+
+    
+  const saveImageAsDraft = async () => {
+    try {
+     const setitem= await AsyncStorage.setItem('draftImage', images[selectedImage]);
+     console.log('setitem ===>', setitem);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const clearDraft = async () => {
+    try {
+      await AsyncStorage.removeItem('draftImage');
+    } catch (error) {
+      console.log('error=====>', error);
+    }
+  };
 
 
     return (
@@ -138,24 +214,33 @@ const ImageSelection = (props) => {
             <Modal
                 animationType={'slide'}
                 transparent={true}
-                visible={showModal}
+                visible={isModalVisible}
             >
 
                 <View style={{ backgroundColor: 'grey', height: '100%' }}>
 
                     <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                         <IconThree style={{ padding: 40 }} name="download" size={30} color="white" onPress={() => { downloadImage() }} />
-                        <IconFour style={{ padding: 40 }} name="cancel" size={30} color="white" onPress={() => { setShowModal(false) }} />
+                        <IconFour style={{ padding: 40 }} name="cancel" size={30} color="white" onPress={() => { setModalVisible(false) }} />
                     </View>
-                    <View style={{ alignItems: 'center', justifyContent: 'space-between', marginTop: 30, backgroundColor: 'white' }}>
-                        <Image
+                    <View style={{ alignItems: 'center', justifyContent: 'space-between', marginTop: 30 }}>
+                        {selectedImage && (<Image
                             width={300}
                             height={300}
-                            source={images}
-                        />
+                            source={{ uri: selectedImage.uri }}
+                        />)}
+
                     </View>
                 </View>
             </Modal>
+
+            {/* <Modal visible={backmodalVisible} animationType="slide">
+                <View>
+                    {selectedImage && <Image source={{ uri: selectedImage.path }} style={{ width: 200, height: 200 }} />}
+                    <Button title="save As Draft" onPress={saveDraft} />
+                    <Button title="Goback" onPress={() => goBack()} />
+                </View>
+            </Modal> */}
         </View>
     );
 };
