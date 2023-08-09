@@ -1,7 +1,29 @@
 import { StyleSheet, Text, View, Image, Pressable } from "react-native";
-import React from "react";
+import React, { useEffect } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const ImageChooser = (props) => {
+
+    // useEffect(() => {
+    //     getData()
+    // }, [])
+
+    // const getData = async () => {
+    //     const getItem = await AsyncStorage.getItem('draftImage')
+    //     console.log("splash get item login key  ==else==>", getItem);
+
+    //     if (getItem === null) {
+    //         console.log("yes null");
+    //         setTimeout(() => {
+    //             props.navigation.navigate("ImageChooser")
+    //         }, 1000);
+    //     }
+    //     else {
+    //         setTimeout(() => {
+    //             props.navigation.navigate("ImageSelection")
+    //         }, 1000);
+    //     }
+    // };
 
     return (
         <View style={{ alignItems: 'center', justifyContent: 'center', flex: 1 }}>

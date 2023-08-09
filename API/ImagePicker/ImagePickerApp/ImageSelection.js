@@ -11,25 +11,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { log } from 'react-native-reanimated';
 
 const ImageSelection = (props) => {
-    const [images, setImages] = useState([]);
-    // const [showModal, setShowModal] = useState(false);
+    const [images, setImages] = useState();
     const [selectedImage, setSelectedImage] = useState(null);
-    const [isModalVisible, setModalVisible] = useState(false);
-    const [draftImage, setDraftImage] = useState(null);
-    const [backmodalVisible, setBackModalVisible] = useState(false)
-
-    // useEffect(() => {
-    //     const backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
-    //         if (backmodalVisible) {
-    //             setBackModalVisible(false);
-    //             return true;
-    //         }
-    //         return false;
-    //     });
-
-    //     return () => backHandler.remove();
-    // }, [backmodalVisible]);
-
+    const [isModalVisible, setModalVisible] = useState(false)
 
     const handleBackButtonClick = () => {
 
@@ -37,21 +21,15 @@ const ImageSelection = (props) => {
             {
                 text: "Save As Draft",
                 onPress: () => {
-                   if( saveImageAsDraft()){
-                    props.navigation.navigate("ImageChooser")
-                   }
-                    // after save navigate in previous screen
-                    
+                    saveImageAsDraft()
                 },
             },
             {
-                text: "GoBack", onPress: () =>{
-                    if(clearDraft()){
+                text: "GoBack", onPress: () => {
+                    if (clearDraft()) {
                         props.navigation.navigate("ImageChooser")
                     }
-                    // Data should be delete when click on go back.
-                  
-              }
+                }
             },
             { text: "Cancel", onPress: () => console.log("Okay"), style: "cancel" },
 
@@ -61,6 +39,7 @@ const ImageSelection = (props) => {
     }
 
     useEffect(() => {
+
         BackHandler.addEventListener('hardwareBackPress', handleBackButtonClick);
         return () => {
             BackHandler.removeEventListener('hardwareBackPress', handleBackButtonClick);
@@ -68,76 +47,70 @@ const ImageSelection = (props) => {
     }, []);
 
 
-    const handleImagePicker = async () => {
+    const handleImagePicker = async (index) => {
         try {
             const image = await ImagePicker.openPicker({
                 mediaType: 'photo',
                 cropping: true,
             });
 
-            setImages([...images, image]);
-            console.log('images ====>', images);
-            console.log('selected image ====>', image);
+            var newArray = [...images]
+            newArray[index] = { ...image, ...newArray[index] }
+            setImages(newArray);
+            console.log('updated array ====>', newArray);
+
+
         } catch (error) {
             console.log(error);
         }
     };
 
     const renderBox = ({ index, item }) => {
-        if (item.uri) {
+        if (item.path) {
             return (
                 <TouchableOpacity onPress={() => { openImageModal(item) }} >
-                    <Image source={{ uri: item.uri }} style={styles.image} />
+                    <Image source={{ uri: item.path }} style={styles.image} />
                 </TouchableOpacity>)
         } else {
             return (
-                <TouchableOpacity style={styles.box} onPress={handleImagePicker}>
+                <TouchableOpacity style={styles.box} onPress={() => { handleImagePicker(index) }}>
                     <Icon name="plus" size={30} color="white" />
                 </TouchableOpacity>
             );
         }
     };
-    // const downloadImage = async ({ item }) => {
-    //     const url = images[index];
-    //     const imagePath = `${RNFetchBlob.fs.dirs.DownloadDir}/image.jpg`;
-
-    //     try {
-    //         // await createNotificationChannel();
-    //         const response = await RNFetchBlob.config({
-    //             fileCache: true,
-    //             path: imagePath,
-    //             addAndroidDownloads: {
-    //                 useDownloadManager: true,
-    //                 notification: true,
-    //                 mediaScannable: true,
-    //                 title: 'Image Download',
-    //                 description: 'Downloading image...',
-    //                 mime: 'image/jpeg',
-    //                 path: imagePath,
-    //             },
-    //             indicator: true,
-
-    //         }).fetch('GET', url);
-
-
-    //     } catch (error) {
-    //         console.error('Image download error:', error);
-    //     }
-    // };
 
     const downloadImage = async () => {
+        const url = 'https://images.pexels.com/photos/414612/pexels-photo-414612.jpeg?cs=srgb&dl=pexels-james-wheeler-414612.jpg&fm=jpg';
+        const imagePath = `${RNFetchBlob.fs.dirs.DownloadDir}/image.jpg`;
+
+        console.log('selectedImage.uri', selectedImage.uri);
+
         try {
+
             const response = await RNFetchBlob.config({
                 fileCache: true,
-                appendExt: 'png',
-            }).fetch('GET', selectedImage.path);
+                path: imagePath,
+                addAndroidDownloads: {
+                    useDownloadManager: true,
+                    notification: true,
+                    mediaScannable: true,
+                    title: 'Image Download',
+                    description: 'Downloading image...',
+                    mime: 'image/jpeg',
+                    path: imagePath,
+                },
+                indicator: true,
 
-            const downloadDir = response.path();
-            console.log('Image downloaded to:', downloadDir);
+            }).fetch('GET', url);
+            // console.log('response ====>', response);
+
+
         } catch (error) {
-            console.log('Error downloading image:', error);
+            console.error('Image download error:', error);
         }
     };
+
 
 
     const openImageModal = (image) => {
@@ -145,38 +118,69 @@ const ImageSelection = (props) => {
         setModalVisible(true);
     };
 
-    // const saveDraft = () => {
-    //     if (selectedImage) {
-    //         setDraftImage(selectedImage);
-    //         setModalVisible(false);
-          
-    //     }
-       
-    // };
 
-    // const goBack = () => {
-    //     setDraftImage(null);
-    //     setModalVisible(false);
-    // };
+    useEffect(() => {
+        showDraftImage();
+    }, []);
+
+    const showDraftImage = async () => {
+        try {
+            const getDraftImage = await AsyncStorage.getItem('draftImage');
+            if (getDraftImage !== undefined && getDraftImage !== null) {
+                setImages(JSON.parse(getDraftImage));
+            }
+            else {
+                setImages([
+                    {
+                        id: 1
+                    },
+                    {
+                        id: 2
+                    },
+                    {
+                        id: 3
+                    },
+                    {
+                        id: 4
+                    },
+                    {
+                        id: 5
+                    },
+                    {
+                        id: 6
+                    }
+
+                ])
+            }
+            console.log('draft image get ====>', getDraftImage);
+        } catch (error) {
+            console.log(error);
+        }
+    };
 
 
-    
-  const saveImageAsDraft = async () => {
-    try {
-     const setitem= await AsyncStorage.setItem('draftImage', images[selectedImage]);
-     console.log('setitem ===>', setitem);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+    const saveImageAsDraft = async () => {
 
-  const clearDraft = async () => {
-    try {
-      await AsyncStorage.removeItem('draftImage');
-    } catch (error) {
-      console.log('error=====>', error);
-    }
-  };
+        try {
+            console.log('setitem ===>', JSON.stringify(images));
+            await AsyncStorage.setItem('draftImage', JSON.stringify(images));
+            props.navigation.navigate('ImageChooser')
+
+            // console.log('setitem ===>', JSON.stringify(images));
+        } catch (error) {
+            console.log('store time error=====>', error);
+        }
+
+    };
+
+    const clearDraft = async () => {
+        try {
+            await AsyncStorage.removeItem('draftImage');
+            console.log('clear storage');
+        } catch (error) {
+            console.log('error=====>', error);
+        }
+    };
 
 
     return (
@@ -204,11 +208,11 @@ const ImageSelection = (props) => {
             </View>
 
             <FlatList
-                data={Array.from({ length: 6 }, (_, index) => ({ key: index.toString(), uri: images[index]?.path }))}
+                data={images}
                 renderItem={renderBox}
-                keyExtractor={item => item.key}
+                keyExtractor={(item, index) => index.toString()}
                 numColumns={3}
-                style={{ marginVertical: 20 }}
+                style={{ marginVertical: 20, flex: 1 }}
             />
 
             <Modal
@@ -227,20 +231,12 @@ const ImageSelection = (props) => {
                         {selectedImage && (<Image
                             width={300}
                             height={300}
-                            source={{ uri: selectedImage.uri }}
+                            source={{ uri: selectedImage.path }}
                         />)}
 
                     </View>
                 </View>
             </Modal>
-
-            {/* <Modal visible={backmodalVisible} animationType="slide">
-                <View>
-                    {selectedImage && <Image source={{ uri: selectedImage.path }} style={{ width: 200, height: 200 }} />}
-                    <Button title="save As Draft" onPress={saveDraft} />
-                    <Button title="Goback" onPress={() => goBack()} />
-                </View>
-            </Modal> */}
         </View>
     );
 };
