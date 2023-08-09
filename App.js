@@ -1,12 +1,11 @@
 import React from 'react'
-
-import NavigatorScreenForImage from './API/ImagePicker/ImagePickerApp/NavigatorScreenForImage'
+import CurrencyConverter from './API/CurrencyCalculateTask/CurrencyConverter'
 
 
 const App = () => {
   return (
 
-  <NavigatorScreenForImage/>
+  <CurrencyConverter/>
 
   )
 
