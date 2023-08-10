@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button } from 'react-native';
+import { View, Text, TextInput, Button, Alert } from 'react-native';
 
 const CurrencyConverter = () => {
   const [inputValue, setInputValue] = useState('');
@@ -22,23 +22,23 @@ const CurrencyConverter = () => {
         const count = Math.floor(remainingValue / note);
         console.log('remainingValue===>', remainingValue);
         console.log('count====>', count);
+
         noteCounts[note] = count;
         console.log('noteCounts[note]====>', noteCounts[note]);
 
         remainingValue -= note * count;
       }
     }
-    // setNotes(noteCounts)
     console.log('notecounts===>', noteCounts);
     return noteCounts;
 
   };
 
   const handleConvertAndMultiply = () => {
-    const parsedValue = parseFloat(inputValue);
-    console.log('parsedvalue===>', parsedValue);
+    const parsedValue = parseInt(inputValue);
+    console.log('parsedvalue===>',Number.isNaN());
 
-    if (!isNaN(parsedValue)) {
+    if (Number.isNaN(parsedValue)) {
       const convertedNotes = convertToNotes(parsedValue);
       setNotes(convertedNotes);
 
@@ -51,13 +51,16 @@ const CurrencyConverter = () => {
       setTotalValue(multipliedValue);
       setInputValue('')
     }
+    else {
+      Alert.alert('Number not exist')
+    }
   };
 
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
       <TextInput
         placeholder="Enter a number"
-        keyboardType="numeric"
+        keyboardType="number-pad"
         value={inputValue}
         style={{ backgroundColor: 'white', padding: 10, width: '50%', marginVertical: 20, borderWidth: 1, }}
         onChangeText={(text) => setInputValue(text)}
