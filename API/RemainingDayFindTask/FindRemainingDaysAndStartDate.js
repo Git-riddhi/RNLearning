@@ -3,9 +3,9 @@ import { View, Text } from 'react-native';
 import moment from 'moment/moment';
 
 const DateArray = [
-  { id: 1, endDate: '10 Sept 2023', duration: '20 Days', productName: '1 GB' },
-  { id: 2, endDate: '21 June 2024', duration: '60 Days', productName: '4 GB' },
-  { id: 3, endDate: '04/10/2023', duration: '2 Days', productName: 'Tarif L' }
+  { id: 1, endDate: '10 Sept 2023', duration: '40 Days', productName: '1 GB' },
+  { id: 2, endDate: '16 august 2023', duration: '7 Days', productName: '4 GB' },
+  { id: 3, endDate: '24/10/2023', duration: '60 Days', productName: 'Tarif L' }
 ];
 
 const FindRemainingDaysAndStartDate = () => {
@@ -24,8 +24,10 @@ const FindRemainingDaysAndStartDate = () => {
       const startDate = moment(item.endDate, ['DD MMM YYYY', 'DD/MM/YYYY']).subtract(duration, 'days');
       // console.log('startdate ====>', startDate);
 
-      const remainingDays = moment().diff(startDate, 'days')
-      // console.log('Todays Date ===>', moment()); // Today's Date
+      var TodayDate = new Date()
+      const remainingDays = endDate.diff(TodayDate, 'days');
+      // console.log('remainingDays ===>', remainingDays + ' days'); 
+
 
       return { ...item, startDate, remainingDays };
     });
@@ -43,7 +45,7 @@ const FindRemainingDaysAndStartDate = () => {
           <Text style={{ color: 'black' }}>Start Date: {item.startDate.format('DD MMM YYYY')}</Text>
           <Text style={{ color: 'black' }}>End Date : {item.endDate}</Text>
           <Text style={{ color: 'black' }}>Duration : {item.duration}</Text>
-          <Text style={{ color: 'black' }}>Remaining Days : {item.remainingDays}</Text>
+          <Text style={{ color: 'black' }}>Remaining Days : {item.remainingDays} days left</Text>
         </View>
       ))}
     </View>

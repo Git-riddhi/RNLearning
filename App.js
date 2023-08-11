@@ -1,12 +1,11 @@
-import React from 'react'
-import CurrencyConverter from './API/CurrencyCalculateTask/CurrencyConverter'
-import FindRemainingDaysAndStartDate from './API/RemainingDayFindTask/FindRemainingDaysAndStartDate'
+import React from 'react';
+import PixelRatioImage from './API/ImageWithPixelRatio/PixelRatioImage'
 
 
 const App = () => {
   return (
 
-  <FindRemainingDaysAndStartDate/>
+    <PixelRatioImage />
 
   )
 
