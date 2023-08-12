@@ -12,6 +12,7 @@
   "dependencies": {
     "@parse/react-native": "0.0.1-alpha.18",
     "@react-native-async-storage/async-storage": "^1.18.0",
+    "@react-native-community/art": "1.2.0",
     "@react-native-community/cameraroll": "^4.1.2",
     "@react-native-community/slider": "^4.4.2",
     "@react-navigation/bottom-tabs": "^6.5.7",
@@ -25,6 +26,7 @@
     "i": "^0.3.7",
     "moment": "^2.29.4",
     "npm": "^9.6.5",
+    "patch-package": "^8.0.0",
     "react": "18.2.0",
     "react-i18next": "^12.3.1",
     "react-native": "0.71.3",
@@ -40,6 +42,7 @@
     "react-native-loading-spinner-overlay": "^3.0.1",
     "react-native-localization": "^2.3.1",
     "react-native-media-controls": "^2.3.0",
+    "react-native-neomorph-shadows": "^1.1.2",
     "react-native-orientation-locker": "^1.5.0",
     "react-native-pager-view": "^6.1.4",
     "react-native-paper": "^5.3.1",
