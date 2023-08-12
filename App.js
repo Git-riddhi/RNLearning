@@ -1,11 +1,11 @@
-import React from 'react';
-import PixelRatioImage from './API/ImageWithPixelRatio/PixelRatioImage'
+import React from 'react'
+import CircularMatrixArray from './API/CircularMatrixArray/CircularMatrixArray'
 
 
 const App = () => {
   return (
 
-    <PixelRatioImage />
+  <CircularMatrixArray/>
 
   )
 
