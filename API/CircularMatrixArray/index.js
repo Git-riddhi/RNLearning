@@ -45,7 +45,7 @@ const CircularMatrix = () => {
   };
 
   const circularFlattened = toCircularMatrix(matrix);
-  console.log('circularFlattened',circularFlattened);
+  console.log('circularFlattened', circularFlattened);
 
   return (
     <View>

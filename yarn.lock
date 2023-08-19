@@ -8319,6 +8319,11 @@
   dependencies:
     "localized-strings" "^0.2.0"
 
+"react-native-adjust@^4.11.5":
+  "integrity" "sha512-LY0iF8TVZqkNT9m0jzJDDygINf1rYjvbuKBK2KnZgySmyAWFs4JzGWibHrknWKqFf3sGC/C2zOtivyJxJ8vIbg=="
+  "resolved" "https://registry.npmjs.org/react-native-adjust/-/react-native-adjust-4.11.5.tgz"
+  "version" "4.11.5"
+
 "react-native-blob-util@^0.18.3":
   "integrity" "sha512-Gx5n1rxl6OcE+Xvj4vFD03Lyhpt+1BmkwU/lIFjPHAUMbSFBvfsOf0TG1cOjMxhw18cDVW7xgcueYZLRscuKPw=="
   "resolved" "https://registry.npmjs.org/react-native-blob-util/-/react-native-blob-util-0.18.3.tgz"
