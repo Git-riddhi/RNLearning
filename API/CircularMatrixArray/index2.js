@@ -1,44 +1,53 @@
 import React from 'react';
 import { View, Text } from 'react-native';
 
-
-// Using For Loop
-
-const CircularMatrix = () => {
+function CircularMatrixOutput() {
   const inputMatrix = [[1, 2, 3], [4, 5, 6], [7, 8, 9]];
-  // const inputMatrix = [[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12]];
+  const outputArray = [];
 
+  const numRows = inputMatrix.length;
+  const numCols = inputMatrix[0].length;
 
-  const convertToCircular = (matrix) => {
-    const circularArray = [];
+  let rowStart = 0,
+    rowEnd = numRows - 1,
+    colStart = 0,
+    colEnd = numCols - 1;
 
-    while (matrix.length) {
-      console.log('matrix.length====>', matrix.length);
-      circularArray.push(...matrix.shift());
+  while (rowStart <= rowEnd && colStart <= colEnd) {
+    // Push values from top row
+    for (let i = colStart; i <= colEnd; i++) {
+      outputArray.push(inputMatrix[rowStart][i]);
+    }
+    rowStart++;
 
-      for (const row of matrix) {
-        const val = row.pop();
-        if (val !== undefined) {
-          circularArray.push(val);
-          row.reverse();
-        }
+    // Push values from right column
+    for (let i = rowStart; i <= rowEnd; i++) {
+      outputArray.push(inputMatrix[i][colEnd]);
+    }
+    colEnd--;
+
+    // Push values from bottom row
+    if (rowStart <= rowEnd) {
+      for (let i = colEnd; i >= colStart; i--) {
+        outputArray.push(inputMatrix[rowEnd][i]);
       }
-
-      matrix.reverse();
+      rowEnd--;
     }
 
-    console.log('circularArray ====>', circularArray);
-    return circularArray;
-  };
-
-
-  const circularOutput = convertToCircular([...inputMatrix]);
+    // Push values from left column
+    if (colStart <= colEnd) {
+      for (let i = rowEnd; i >= rowStart; i--) {
+        outputArray.push(inputMatrix[i][colStart]);
+      }
+      colStart++;
+    }
+  }
 
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text>{circularOutput.join(', ')}</Text>
+    <View>
+      <Text>{outputArray.join(', ')}</Text>
     </View>
   );
-};
+}
 
-export default CircularMatrix;
+export default CircularMatrixOutput;
