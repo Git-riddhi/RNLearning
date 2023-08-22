@@ -5,7 +5,7 @@ import { View, Text, StyleSheet, Image } from 'react-native';
 
 const SplashScreen = (props) => {
     setTimeout(() => {
-        props.navigation.navigate("TrainSelection")
+        props.navigation.navigate("CitySelection")
     }, 1000);
 
 
