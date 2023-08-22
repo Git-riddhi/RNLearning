@@ -123,7 +123,7 @@ const LoginScreen = (props) => {
                     <TouchableOpacity
                         onPress={() => {
                            if(Login()){
-                            props.navigation.navigate('Home')
+                            props.navigation.navigate('TrainSelection')
                            }
                         }}
                         style={styles.aerrowTouch}
