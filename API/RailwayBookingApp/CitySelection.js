@@ -17,6 +17,7 @@ import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import Icon from "react-native-vector-icons/Ionicons";
 import moment from "moment";
 import { CityData } from "./DataForBookTicket";
+import AntDesign from "react-native-vector-icons/AntDesign";
 
 const CitySelection = (props) => {
     const [selectedDepartureDate, setSelectedDepartureDate] = useState(
@@ -75,7 +76,29 @@ const CitySelection = (props) => {
 
     return (
         <View style={styles.container}>
+            <View
+                style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    marginHorizontal: 15,
+                }}
+            >
+                <TouchableOpacity
+                    onPress={() => {
+                        props.navigation.navigate("CitySelection")
+                    }}
+                >
+                    <AntDesign name="arrowleft" size={30} color={"black"} />
+                </TouchableOpacity>
+
+                <Text style={styles.headerText}>TRAIN SEARCH</Text>
+                
+                <View></View>
+            </View>
             <View style={styles.innercontainer}>
+
+
                 <View style={styles.ChooseCityContainer}>
                     <View style={{ width: "44%" }}>
                         <Text style={styles.title}>From</Text>
@@ -196,7 +219,7 @@ const CitySelection = (props) => {
                             />
                         }
                         renderItem={({ item }) => (
-                            <View style={{ padding: 10, backgroundColor: "yellow" }}>
+                            <View style={{ padding: 10, backgroundColor: 'lightgrey' }}>
                                 <TouchableOpacity onPress={() => selectFromCity(item)}>
                                     <Text style={{ marginHorizontal: 20 }}>{item.city}</Text>
                                 </TouchableOpacity>
@@ -208,7 +231,7 @@ const CitySelection = (props) => {
 
             <Modal
                 visible={isToCityModalVisible}
-                style={{ justifyContent: "center", alignItems: "center", flex: 1}}
+                style={{ justifyContent: "center", alignItems: "center", flex: 1 }}
                 animationType="slide"
                 transparent={true}
                 onDismiss={() => {
@@ -242,19 +265,19 @@ const CitySelection = (props) => {
             <View style={{ marginVertical: 50, flex: 1, alignItems: "center" }}>
                 <Button
                     title="Find Train"
-                    onPress={() => { 
+                    onPress={() => {
                         // if(selectedFromCity && selectedToCity && selectedDepartureDate)
                         // {
                         props.navigation.navigate("FindTrain", {
                             fromcity: selectedFromCity,
                             tocity: selectedToCity,
                         })
-                    //  } 
-                    // else {
-                    //     Alert.alert('Please select city where you want to go.')
-                    // }
-                }
-                }
+                        //  } 
+                        // else {
+                        //     Alert.alert('Please select city where you want to go.')
+                        // }
+                    }
+                    }
                     color={"green"}
                 />
             </View>
@@ -271,6 +294,13 @@ const styles = StyleSheet.create({
     },
     innercontainer: {
         marginHorizontal: 20,
+    },
+    headerText: {
+        fontSize: 20,
+        textAlign: "center",
+        color: "black",
+        fontWeight: "bold",
+        marginBottom: 10,
     },
     ChooseCityContainer: {
         flexDirection: "row",
