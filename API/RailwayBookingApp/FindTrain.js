@@ -6,43 +6,67 @@ import {
     Image,
     FlatList,
     ScrollView,
+    Alert,
 } from "react-native";
-import { TrainDetails } from "./DataForBookTicket";
+import { TrainClass, TrainDetails } from "./DataForBookTicket";
 import { TouchableOpacity } from "react-native";
 import AntDesign from "react-native-vector-icons/AntDesign";
-
-
 
 const FindTrain = (props) => {
     const [footerView, setFooterView] = useState(false);
     const [trainClass, setTrainClass] = useState(false);
-    const [updatedData, setUpdatedData] = useState([])
-
-    const { fromcity, tocity } = props?.route?.params
-    console.log('fromcity ===>', fromcity);
-    console.log('tocity ===>', tocity);
+    const [filteredItems, setFilteredItems] = useState(TrainDetails);
+    const [selectedTrainclass, setSelectedTrainclass] = useState();
+    const [uniqueKeyArray, setUniqueKeyArray] = useState();
 
 
-    const checkProps = () => {
-        const newdata = [...TrainDetails]
-        console.log('newdata  ===>', newdata);
-        const filteredData = newdata.map((item) => 
-            (item.From == fromcity && item.To == tocity )? item: null
-            
-            )
-            console.log('filteredData===>', filteredData);
+    const TrainClassSelection = ({ trainClasses, selectedClass, onSelect }) => {
+        return (
+            <View style={styles.trainClassView}>
+                <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                {trainClasses.map((trainClass) => {
 
+                        return (
+                            <TouchableOpacity
+                                key={trainClass}
+                                onPress={() => onSelect(trainClass)}
+                                style={[
+                                    styles.TouchableClass,
+                                    {
+                                        backgroundColor:
+                                        trainClass === selectedClass  ? "green" : "white",
+                                    },
+                                ]}
+                            >
+                                <Text style={styles.classText}>{trainClass}</Text>
+                            </TouchableOpacity>
+                        );
+                    })}
+                </ScrollView>
+            </View>
+        );
+    };
 
+    const handleCategorySelect = (trainIndex, selectedClass) => {
+        const updatedTrainDetails = [...TrainDetails];
+        updatedTrainDetails[trainIndex].selectedClass = selectedClass;
+        setFilteredItems(updatedTrainDetails);
+        // console.log('filtered item ===>', filteredItems);
+        setFooterView(true)
+    };
 
-    }
-
-    useEffect(() => {
-        checkProps()
-    }, [])
 
     const Item = ({ item }) => (
+      
         <View style={styles.mainView}>
-            <View style={{ margin: 15 }}>
+            <TouchableOpacity
+                style={{ margin: 15 }}
+                onPress={() => {
+                    filteredItems
+                        ? props.navigation.navigate("PassengerDetails", { item })
+                        : Alert.alert("Please select train class.");
+                }}
+            >
                 <Text style={styles.textStyle}>
                     {item.trainName} ({item.trainNumber})
                 </Text>
@@ -66,36 +90,34 @@ const FindTrain = (props) => {
                     <Text style={styles.textStyle2}>{item.departureDate}</Text>
                     <Text style={styles.textStyle2}>{item.reachDate}</Text>
                 </View>
-            </View>
+            </TouchableOpacity>
 
-            <View style={styles.trainClassView}>
+            {/* <View style={styles.trainClassView}>
                 <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                    <TouchableOpacity
-                        onPress={() => {
-                            setTrainClass(true)
-                            setFooterView(true)
-                        }}
-                        style={[styles.TouchableClass, { backgroundColor: trainClass ? 'green' : null }]}
-                    >
-                        <Text style={styles.classText}>SL</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        style={styles.TouchableClass}
-                    >
-                        <Text style={styles.classText}>3A</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        style={styles.TouchableClass}
-                    >
-                        <Text style={styles.classText}>2A</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        style={[styles.TouchableClass, { marginRight: 15 }]}
-                    >
-                        <Text style={styles.classText}>1A</Text>
-                    </TouchableOpacity>
+                    {item.trainClass.map((item) => {
+
+                        return (
+                            <TouchableOpacity
+                                key={item.name}
+                                onPress={() => {
+                                    handleCategorySelect( item.name);
+                                    setTrainClass(true);
+                                    setFooterView(true);
+                                }}
+                                style={[
+                                    styles.TouchableClass,
+                                    {
+                                        backgroundColor:
+                                            item.selected ? "green" : "white",
+                                    },
+                                ]}
+                            >
+                                <Text style={styles.classText}>{item.name}</Text>
+                            </TouchableOpacity>
+                        );
+                    })}
                 </ScrollView>
-            </View>
+            </View> */}
         </View>
     );
 
@@ -117,14 +139,27 @@ const FindTrain = (props) => {
                     <AntDesign name="arrowleft" size={30} color={"black"} />
                 </TouchableOpacity>
 
-                <Text style={styles.headerText}>Train Details</Text>
+                <Text style={styles.headerText}>TRAIN DETAILS</Text>
                 <View></View>
             </View>
             <FlatList
-                data={updatedData}
+                data={TrainDetails}
                 showsVerticalScrollIndicator={false}
-                // ListHeaderComponent={<View style={styles.headerView}><Text style={styles.headerText}>Find Trains</Text></View>}
-                renderItem={({ item }) => <Item item={item} />}
+                renderItem={({ item, index }) => (
+                    <View>
+
+                        <Item
+                            item={item}
+                            trainIndex={index}>
+                        </Item>
+                        <TrainClassSelection
+                            trainClasses={item.trainClass}
+                            selectedClass={item.selectedClass}
+                            onSelect={(selectedClass) => handleCategorySelect(index, selectedClass)}
+                        />
+                    </View>
+                )}
+
                 keyExtractor={(item, index) => item + index}
                 ItemSeparatorComponent={
                     <View
@@ -144,9 +179,15 @@ const FindTrain = (props) => {
                     }}
                 >
                     <TouchableOpacity style={{ backgroundColor: "green", width: "45%" }}>
-                        <Text style={styles.footerButtonText}>1350/- PRICE</Text>
+                        <Text style={styles.footerButtonText}>550/- PRICE</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={{ backgroundColor: "red", width: "45%" }} onPress={() => { props.navigation.navigate('PassengerDetails') }}>
+                    <TouchableOpacity
+                        style={{ backgroundColor: "red", width: "45%" }}
+                        onPress={() => {
+
+                            props.navigation.navigate("PassengerDetails")
+                        }}
+                    >
                         <Text style={styles.footerButtonText}>PASSENGER DETAILS</Text>
                     </TouchableOpacity>
                 </View>
@@ -163,7 +204,6 @@ const styles = StyleSheet.create({
     },
 
     mainView: {
-        // padding: 10,
     },
     headerText: {
         fontSize: 20,
@@ -195,26 +235,20 @@ const styles = StyleSheet.create({
     trainClassView: {
         flexDirection: "row",
         alignItems: "center",
-        width: "100%",
         marginBottom: 15,
-        marginHorizontal: 10,
+        marginLeft: 10,
     },
     classText: {
-        // borderWidth: 1.5,
         fontSize: 15,
         textAlign: "center",
-        // borderColor: 'grey',
-        // borderRadius: 10,
         color: "black",
         fontWeight: "bold",
-        marginRight: 10,
         padding: 10,
-        width: 100,
     },
     TouchableClass: {
-        // backgroundColor: "green",
         borderWidth: 1.5,
         borderColor: "grey",
+        width: 60,
         borderRadius: 10,
         marginRight: 5,
     },
