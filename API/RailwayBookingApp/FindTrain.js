@@ -11,21 +11,21 @@ import {
 import { TrainClass, TrainDetails } from "./DataForBookTicket";
 import { TouchableOpacity } from "react-native";
 import AntDesign from "react-native-vector-icons/AntDesign";
+import Icon from "react-native-vector-icons/MaterialIcons";
+import { color } from "react-native-reanimated";
 
 const FindTrain = (props) => {
     const [footerView, setFooterView] = useState(false);
-    const [trainClass, setTrainClass] = useState(false);
     const [filteredItems, setFilteredItems] = useState(TrainDetails);
-    const [selectedTrainclass, setSelectedTrainclass] = useState();
-    const [uniqueKeyArray, setUniqueKeyArray] = useState();
-
 
     const TrainClassSelection = ({ trainClasses, selectedClass, onSelect }) => {
+        // console.log('trainClasses ===', trainClasses);
+        // console.log('selectedClass ===', selectedClass);
+
         return (
             <View style={styles.trainClassView}>
                 <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                {trainClasses.map((trainClass) => {
-
+                    {trainClasses.map((trainClass) => {
                         return (
                             <TouchableOpacity
                                 key={trainClass}
@@ -34,7 +34,7 @@ const FindTrain = (props) => {
                                     styles.TouchableClass,
                                     {
                                         backgroundColor:
-                                        trainClass === selectedClass  ? "green" : "white",
+                                            trainClass === selectedClass ? "green" : "white",
                                     },
                                 ]}
                             >
@@ -49,33 +49,36 @@ const FindTrain = (props) => {
 
     const handleCategorySelect = (trainIndex, selectedClass) => {
         const updatedTrainDetails = [...TrainDetails];
-        updatedTrainDetails[trainIndex].selectedClass = selectedClass;
+
+        // Clear previously selected class from other train items
+        updatedTrainDetails.forEach((trainItem, index) => {
+            if (index !== trainIndex) {
+                trainItem.selectedClass = undefined;
+            }
+        });
+
+        // Toggle the selection for the current train item
+        if (updatedTrainDetails[trainIndex].selectedClass === selectedClass) {
+            updatedTrainDetails[trainIndex].selectedClass = undefined;
+        } else {
+            updatedTrainDetails[trainIndex].selectedClass = selectedClass;
+        }
+
         setFilteredItems(updatedTrainDetails);
-        // console.log('filtered item ===>', filteredItems);
-        setFooterView(true)
+        // console.log('updatedTrainDetails===>', updatedTrainDetails);
+        setFooterView(true);
     };
 
-
     const Item = ({ item }) => (
-      
         <View style={styles.mainView}>
             <TouchableOpacity
-                style={{ margin: 15 }}
-                onPress={() => {
-                    filteredItems
-                        ? props.navigation.navigate("PassengerDetails", { item })
-                        : Alert.alert("Please select train class.");
-                }}
+                style={styles.trainitemView}
             >
                 <Text style={styles.textStyle}>
                     {item.trainName} ({item.trainNumber})
                 </Text>
                 <View
-                    style={{
-                        borderBottomWidth: 0.2,
-                        marginVertical: 10,
-                        borderColor: "grey",
-                    }}
+                    style={ styles.dividerView}
                 ></View>
                 <View style={styles.firstView}>
                     <Text style={styles.textStyle}>{item.time}</Text>
@@ -91,45 +94,13 @@ const FindTrain = (props) => {
                     <Text style={styles.textStyle2}>{item.reachDate}</Text>
                 </View>
             </TouchableOpacity>
-
-            {/* <View style={styles.trainClassView}>
-                <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                    {item.trainClass.map((item) => {
-
-                        return (
-                            <TouchableOpacity
-                                key={item.name}
-                                onPress={() => {
-                                    handleCategorySelect( item.name);
-                                    setTrainClass(true);
-                                    setFooterView(true);
-                                }}
-                                style={[
-                                    styles.TouchableClass,
-                                    {
-                                        backgroundColor:
-                                            item.selected ? "green" : "white",
-                                    },
-                                ]}
-                            >
-                                <Text style={styles.classText}>{item.name}</Text>
-                            </TouchableOpacity>
-                        );
-                    })}
-                </ScrollView>
-            </View> */}
         </View>
     );
 
     return (
         <View style={styles.container}>
             <View
-                style={{
-                    flexDirection: "row",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    marginHorizontal: 15,
-                }}
+                style={styles.headingView}
             >
                 <TouchableOpacity
                     onPress={() => {
@@ -140,52 +111,70 @@ const FindTrain = (props) => {
                 </TouchableOpacity>
 
                 <Text style={styles.headerText}>TRAIN DETAILS</Text>
-                <View></View>
+                <Text></Text>
             </View>
             <FlatList
                 data={TrainDetails}
                 showsVerticalScrollIndicator={false}
                 renderItem={({ item, index }) => (
                     <View>
-
-                        <Item
-                            item={item}
-                            trainIndex={index}>
-                        </Item>
+                        <Item item={item} trainIndex={index}></Item>
                         <TrainClassSelection
                             trainClasses={item.trainClass}
                             selectedClass={item.selectedClass}
-                            onSelect={(selectedClass) => handleCategorySelect(index, selectedClass)}
+                            onSelect={(selectedClass) =>
+                                handleCategorySelect(index, selectedClass)
+                            }
                         />
                     </View>
                 )}
-
                 keyExtractor={(item, index) => item + index}
                 ItemSeparatorComponent={
                     <View
-                        style={{ width: "100%", borderBottomWidth: 3, borderColor: "grey" }}
+                        style={{ width: "100%", borderBottomWidth: 2, borderColor: "grey" }}
                     />
                 }
             />
 
             {footerView ? (
                 <View
-                    style={{
-                        flexDirection: "row",
-                        alignItems: "center",
-                        justifyContent: "space-evenly",
-                        width: "100%",
-                        paddingVertical: 15,
-                    }}
+                    style={styles.footerView}
                 >
-                    <TouchableOpacity style={{ backgroundColor: "green", width: "45%" }}>
-                        <Text style={styles.footerButtonText}>550/- PRICE</Text>
-                    </TouchableOpacity>
                     <TouchableOpacity
-                        style={{ backgroundColor: "red", width: "45%" }}
                         onPress={() => {
+                            const selectedTrainItem = filteredItems.find(
+                                (item) => item.selectedClass !== undefined
+                            );
+                            if (selectedTrainItem) {
+                                props.navigation.navigate("FareBreakUp", {
+                                    selectedTrainItem,
+                                });
+                            } else {
+                                Alert.alert("Please select train class.");
+                            }
+                        }}
+                        activeOpacity={0.5}
+                        style={styles.priceButtonView}
+                    >
+                        <Text style={styles.priceText}>550/- PRICE</Text>
+                        <Text style={{ color: "white" }}>Fare Breakup</Text>
+                        <Icon name="arrow-drop-up" size={25} color={"white"} />
+                    </TouchableOpacity>
 
-                            props.navigation.navigate("PassengerDetails")
+                    <TouchableOpacity
+                        activeOpacity={0.5}
+                        style={styles.passengerDetailsButton}
+                        onPress={() => {
+                            const selectedTrainItem = filteredItems.find(
+                                (item) => item.selectedClass !== undefined
+                            );
+                            if (selectedTrainItem) {
+                                props.navigation.navigate("PassengerDetails", {
+                                    selectedTrainItem,
+                                });
+                            } else {
+                                Alert.alert("Please select train class.");
+                            }
                         }}
                     >
                         <Text style={styles.footerButtonText}>PASSENGER DETAILS</Text>
@@ -200,17 +189,28 @@ const FindTrain = (props) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        marginVertical: 10,
+        marginTop: 15,
     },
-
-    mainView: {
+    headingView: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+        marginHorizontal: 10,
+    },
+    mainView: {},
+    trainitemView: {
+        margin: 15
+    },
+    dividerView:{
+        borderBottomWidth: 0.2,
+        marginVertical: 10,
+        borderColor: "grey",
     },
     headerText: {
         fontSize: 20,
         textAlign: "center",
         color: "black",
         fontWeight: "bold",
-        marginBottom: 10,
     },
     firstView: {
         flexDirection: "row",
@@ -221,12 +221,12 @@ const styles = StyleSheet.create({
         color: "black",
         fontWeight: "bold",
     },
-    headerView: {
-        padding: 10,
-        marginBottom: 10,
-        flex: 1,
-        alignSelf: "center",
-    },
+    // headerView: {
+    //     padding: 10,
+    //     marginBottom: 10,
+    //     flex: 1,
+    //     alignSelf: "center",
+    // },
     textStyle2: {
         fontSize: 15,
         color: "grey",
@@ -243,12 +243,14 @@ const styles = StyleSheet.create({
         textAlign: "center",
         color: "black",
         fontWeight: "bold",
-        padding: 10,
+        padding: 6,
+        // backgroundColor:'red',
+        width: 100,
     },
     TouchableClass: {
         borderWidth: 1.5,
         borderColor: "grey",
-        width: 60,
+        width: 100,
         borderRadius: 10,
         marginRight: 5,
     },
@@ -261,5 +263,29 @@ const styles = StyleSheet.create({
         padding: 10,
         textAlign: "center",
     },
+    footerView: {
+        flexDirection: "row",
+        alignItems: "center",
+        width: "100%",
+        paddingVertical: 15,
+    },
+    priceButtonView: {
+        backgroundColor: "green",
+        borderWidth: 1.5,
+        borderColor: "grey",
+        width: "50%",
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: 5.5
+    },
+    priceText: {
+        color: "white",
+        marginRight: 7
+    },
+    passengerDetailsButton: {
+        backgroundColor: "red",
+        width: "50%"
+    }
 });
 export default FindTrain;

@@ -33,31 +33,11 @@ const CitySelection = (props) => {
     const [selectedFromCity, setSelectedFromCity] = useState(null);
     const [selectedToCity, setSelectedToCity] = useState(null);
 
+
     const showDepartureDatePicker = () => {
         setDepartureDatePickerVisible(true);
     };
-
-    // const apicall = async () => {
-
-    //     const url = 'https://irctc1.p.rapidapi.com/api/v1/searchTrain?query=190';
-    //     const options = {
-    //         method: 'GET',
-    //         headers: {
-    //             'X-RapidAPI-Key': 'ccbf5a7fc8mshc5776dd19ccaef1p17d0e7jsnf649042ec591',
-    //             'X-RapidAPI-Host': 'irctc1.p.rapidapi.com'
-    //         }
-    //     };
-
-    //     try {
-    //         const response = await fetch(url, options);
-    //         const result = await response.text();
-    //         console.log(result);
-    //     } catch (error) {
-    //         console.error(error);
-    //     }
-    // }
-    // apicall()
-
+   
     const selectFromCity = (city) => {
         setSelectedFromCity(city);
         setFromCityModalVisible(false);
@@ -76,31 +56,13 @@ const CitySelection = (props) => {
 
     return (
         <View style={styles.container}>
-            <View
-                style={{
-                    flexDirection: "row",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    marginHorizontal: 15,
-                }}
-            >
-                <TouchableOpacity
-                    onPress={() => {
-                        props.navigation.navigate("CitySelection")
-                    }}
-                >
-                    <AntDesign name="arrowleft" size={30} color={"black"} />
-                </TouchableOpacity>
-
+            <View style={styles.heading}>
                 <Text style={styles.headerText}>TRAIN SEARCH</Text>
-                
-                <View></View>
             </View>
+
             <View style={styles.innercontainer}>
-
-
                 <View style={styles.ChooseCityContainer}>
-                    <View style={{ width: "44%" }}>
+                    <View style={styles.fromView}>
                         <Text style={styles.title}>From</Text>
                         <View style={styles.SelectionView}>
                             {selectedFromCity ? (
@@ -125,12 +87,12 @@ const CitySelection = (props) => {
                         >
                             <Image
                                 source={require("../../assets/swipeArrow.png")}
-                                style={{ height: 30, width: 30, marginTop: 20 }}
+                                style={styles.swipeImage}
                             />
                         </TouchableOpacity>
                     </View>
 
-                    <View style={{ width: "44%" }}>
+                    <View style={styles.fromView}>
                         <Text style={styles.title}>To</Text>
 
                         <View style={styles.SelectionView}>
@@ -150,7 +112,7 @@ const CitySelection = (props) => {
                     </View>
                 </View>
 
-                <View style={{}}>
+                <View>
                     <View
                         style={{
                             height: 70,
@@ -162,13 +124,16 @@ const CitySelection = (props) => {
                             <TextInput
                                 value={moment(selectedDepartureDate).format("DD - MM - YYYY")}
                                 editable={false}
+                                placeholder="Select Date"
+                                style={{ color: "black", fontWeight: "600" }}
                             />
                             <TouchableOpacity onPress={showDepartureDatePicker}>
-                                <Icon name="calendar" size={20} />
+                                <Icon name="calendar" size={23} />
                             </TouchableOpacity>
 
                             {isDepartureDatePickerVisible && (
                                 <DatePicker
+                            
                                     modal
                                     open={isDepartureDatePickerVisible}
                                     minimumDate={new Date()} // Today's date
@@ -176,9 +141,6 @@ const CitySelection = (props) => {
                                     date={selectedDepartureDate}
                                     mode="date"
                                     placeholder="select date"
-                                    // format= {moment(new Date()).format("YYYY-MM-DD")}
-                                    // minimumDate={new Date()}
-                                    // maximumDate={new Date("2023-12-31")}
                                     onConfirm={(date) => {
                                         setDepartureDatePickerVisible(false);
                                         setSelectedDepartureDate(date);
@@ -198,18 +160,18 @@ const CitySelection = (props) => {
 
             <Modal
                 visible={isFromCityModalVisible}
-                style={{ justifyContent: "center", alignItems: "center", flex: 1 }}
                 animationType="slide"
                 transparent={true}
                 onDismiss={() => {
                     setFromCityModalVisible(false);
                 }}
             >
-                <View>
+                <View style={styles.centeredView}>
+                    <Text style={styles.modalHeading}>SELECT CITY FROM HERE</Text>
                     <FlatList
                         data={CityData}
                         keyExtractor={(item, index) => item + index}
-                        style={{ width: "80%", alignSelf: "center" }}
+                        style={styles.cityFlatlist}
                         ItemSeparatorComponent={
                             <View
                                 style={{
@@ -219,9 +181,9 @@ const CitySelection = (props) => {
                             />
                         }
                         renderItem={({ item }) => (
-                            <View style={{ padding: 10, backgroundColor: 'lightgrey' }}>
+                            <View style={styles.flatlistItemView}>
                                 <TouchableOpacity onPress={() => selectFromCity(item)}>
-                                    <Text style={{ marginHorizontal: 20 }}>{item.city}</Text>
+                                    <Text style={styles.citiesText}>{item.city}</Text>
                                 </TouchableOpacity>
                             </View>
                         )}
@@ -231,18 +193,18 @@ const CitySelection = (props) => {
 
             <Modal
                 visible={isToCityModalVisible}
-                style={{ justifyContent: "center", alignItems: "center", flex: 1 }}
                 animationType="slide"
                 transparent={true}
                 onDismiss={() => {
                     setToCityModalVisible(false);
                 }}
             >
-                <View>
+                <View style={styles.centeredView}>
+                    <Text style={styles.modalHeading}>SELECT CITY FROM HERE</Text>
                     <FlatList
                         data={CityData}
                         keyExtractor={(item, index) => item + index}
-                        style={{ width: "80%", alignSelf: "center" }}
+                        style={styles.cityFlatlist}
                         ItemSeparatorComponent={
                             <View
                                 style={{
@@ -252,45 +214,53 @@ const CitySelection = (props) => {
                             />
                         }
                         renderItem={({ item }) => (
-                            <View style={{ padding: 10, backgroundColor: "lightgrey" }}>
+                            <View style={styles.flatlistItemView}>
                                 <TouchableOpacity onPress={() => selectToCity(item)}>
-                                    <Text style={{ marginHorizontal: 20 }}>{item.city}</Text>
+                                    <Text style={styles.citiesText}>{item.city}</Text>
                                 </TouchableOpacity>
                             </View>
                         )}
                     />
                 </View>
             </Modal>
-
-            <View style={{ marginVertical: 50, flex: 1, alignItems: "center" }}>
-                <Button
-                    title="Find Train"
-                    onPress={() => {
-                        // if(selectedFromCity && selectedToCity && selectedDepartureDate)
-                        // {
-                        props.navigation.navigate("FindTrain", {
-                            fromcity: selectedFromCity,
-                            tocity: selectedToCity,
-                        })
-                        //  } 
-                        // else {
-                        //     Alert.alert('Please select city where you want to go.')
-                        // }
-                    }
-                    }
-                    color={"green"}
-                />
-            </View>
+            <TouchableOpacity
+                style={[
+                    styles.buttonStyle,
+                    {
+                        backgroundColor:
+                            selectedFromCity && selectedToCity && selectedDepartureDate
+                                ? "green"
+                                : "grey",
+                    },
+                ]}
+                disabled={
+                    selectedFromCity && selectedToCity && selectedDepartureDate
+                        ? false
+                        : true
+                }
+                onPress={() => {
+                    props.navigation.navigate("FindTrain", {
+                        fromcity: selectedFromCity,
+                        tocity: selectedToCity,
+                    });
+                }}
+            >
+                <Text style={styles.footerButtonText}>FIND TRAIN</Text>
+            </TouchableOpacity>
         </View>
     );
 };
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        marginTop: 10,
+        marginTop: 15,
     },
     image: {
         flex: 1,
+    },
+    heading: {
+        alignItems: "center",
+        marginBottom: 15,
     },
     innercontainer: {
         marginHorizontal: 20,
@@ -300,8 +270,8 @@ const styles = StyleSheet.create({
         textAlign: "center",
         color: "black",
         fontWeight: "bold",
-        marginBottom: 10,
     },
+    fromView: { width: "44%" },
     ChooseCityContainer: {
         flexDirection: "row",
         alignItems: "center",
@@ -320,6 +290,36 @@ const styles = StyleSheet.create({
         color: "grey",
         marginTop: 5,
     },
+    swipeImage: {
+        height: 30,
+        width: 30,
+        marginTop: 20,
+    },
+    modalHeading: {
+        backgroundColor: "white",
+        width: "50%",
+        textAlign: "center",
+        marginVertical: 10,
+        color: "black",
+        fontWeight: "bold",
+        padding: 5,
+    },
+    cityFlatlist: {
+        width: "70%",
+        alignSelf: "center",
+    },
+    citiesText: {
+        marginHorizontal: 20,
+        textAlign: "center",
+        color: "black"
+    },
+    centeredView: {
+        flex: 1,
+        justifyContent: "flex-end",
+        alignItems: "center",
+        backgroundColor: "rgba(52, 52, 52, 0.8)",
+    },
+    flatlistItemView: { padding: 10, backgroundColor: "#dcdcdc" },
     dateContainer: {
         backgroundColor: "white",
         padding: 10,
@@ -328,6 +328,23 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "space-between",
         elevation: 4,
+    },
+    footerButtonText: {
+        borderWidth: 1.5,
+        borderColor: "grey",
+        color: "white",
+        fontWeight: "bold",
+        padding: 10,
+        textAlign: "center",
+    },
+    buttonStyle: {
+        // backgroundColor: "green",
+        width: "45%",
+        marginVertical: 50,
+        alignSelf: "center",
+    },
+    disabledButton: {
+        // backgroundColor: 'lightgray',
     },
 });
 

@@ -7,6 +7,7 @@ import FindTrain from './FindTrain';
 import CitySelection from './CitySelection';
 import PassengerDetails from './PassengerDetails';
 import ConfirmTicket from './ConfirmTicket';
+import FareBreakUp from './FareBreakUp';
 
 
 const Stack = createNativeStackNavigator();
@@ -21,6 +22,8 @@ const AppRoutesScreen = () => {
         <Stack.Screen name="CitySelection" component={CitySelection} />
         <Stack.Screen name="PassengerDetails" component={PassengerDetails} />
         <Stack.Screen name="ConfirmTicket" component={ConfirmTicket} />
+        <Stack.Screen name="FareBreakUp" component={FareBreakUp} />
+
       </Stack.Navigator>
     </NavigationContainer>
   );

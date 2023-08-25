@@ -13,6 +13,7 @@ import {
     TouchableOpacity,
     ImageBackground,
 } from "react-native";
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 
 const LoginScreen = (props) => {
 
@@ -22,6 +23,8 @@ const LoginScreen = (props) => {
 
     const [checkEmail, setCheckEmail] = useState("");
     const [checkPassword, setCheckPassword] = useState("");
+
+    const [isPasswordSecure, setIsPasswordSecure] = useState(true);
 
     const firstTextInput = useRef();
 
@@ -72,7 +75,7 @@ const LoginScreen = (props) => {
     };
 
 
-  
+
     return (
         <View style={styles.container}>
             <ImageBackground
@@ -80,61 +83,69 @@ const LoginScreen = (props) => {
                 resizeMode="cover"
                 style={styles.image}
             >
-                <Text style={styles.headertext}>LogIn </Text>
 
-                <View style={styles.innercontainer}>
-                    <TextInput
-                        placeholder="Enter Email"
-                        onChangeText={(email) => mail(email)}
-                        style={styles.textInputStyle}
-                        keyboardType="email-address"
-                        autoCapitalize="none"
-                        returnKeyType={"next"}
-                        value={email}
-                        onSubmitEditing={() => {
-                            firstTextInput.current.focus();
-                        }}
-                    />
-                    {checkEmail ? (
-                        <Text style={styles.checkText}>{checkEmail}</Text>
-                    ) : (
-                        <Text style={styles.checkText}></Text>
-                    )}
-
-                    <TextInput
-                        style={styles.textInputStyle}
-                        placeholder="Enter Password"
-                        secureTextEntry={true}
-                        onChangeText={(password) => pwd(password)}
-                        returnKeyType={"done"}
-                        value={password}
-                        ref={firstTextInput}
-                    />
-                    {checkPassword ? (
-                        <Text style={styles.checkText}>{checkPassword}</Text>
-                    ) : (
-                        <Text style={styles.checkText}></Text>
-                    )}
-                </View>
-
-                <View style={styles.Login}>
-                    <Text style={styles.LoginButtonText}> LogIn </Text>
-
-                    <TouchableOpacity
-                        onPress={() => {
-                           if(Login()){
-                            props.navigation.navigate('TrainSelection')
-                           }
-                        }}
-                        style={styles.aerrowTouch}
-                    >
-                        <Image
-                            source={require("../../assets/right-arrow.png")}
-                            style={styles.rightAerrowButton}
+                <ScrollView showsVerticalScrollIndicator={false} style={styles.scrollviewStyle}>
+                    <Text style={styles.mainheading}>RAILWAY TICKET BOOKING</Text>
+                    <View style={styles.innercontainer}>
+                        <TextInput
+                            placeholder="Enter Email"
+                            onChangeText={(email) => mail(email)}
+                            style={styles.textInputStyle}
+                            keyboardType="email-address"
+                            autoCapitalize="none"
+                            returnKeyType={"next"}
+                            value={email}
+                            onSubmitEditing={() => {
+                                firstTextInput.current.focus();
+                            }}
                         />
-                    </TouchableOpacity>
-                </View>
+                        {checkEmail ? (
+                            <Text style={styles.checkText}>{checkEmail}</Text>
+                        ) : (
+                            <Text style={styles.checkText}></Text>
+                        )}
 
+
+                        <View style={styles.passwordInputView}>
+                            <TextInput
+                                style={styles.textInputStyle}
+                                placeholder="Enter Password"
+                                secureTextEntry={isPasswordSecure}
+                                onChangeText={(password) => pwd(password)}
+                                returnKeyType={"done"}
+                                value={password}
+                                ref={firstTextInput}
+                            />
+                            <MaterialCommunityIcons
+                                name={isPasswordSecure ? "eye-off" : "eye"}
+                                size={24}
+                                style={styles.eyeIconStyle}
+                                color={"black"}
+                                onPress={() => {
+                                    isPasswordSecure
+                                        ? setIsPasswordSecure(false)
+                                        : setIsPasswordSecure(true);
+                                }}
+                            />
+                        </View>
+                        {checkPassword ? (
+                            <Text style={styles.checkText}>{checkPassword}</Text>
+                        ) : (
+                            <Text style={styles.checkText}></Text>
+                        )}
+                    </View>
+                    <View style={styles.Login}>
+                        <TouchableOpacity  onPress={() => {
+                            if (Login()) {
+                                props.navigation.navigate('CitySelection')
+                            }
+                        }}>
+
+                            <Text style={styles.LoginButtonText}> LOGIN </Text>
+
+                        </TouchableOpacity>
+                    </View>
+                </ScrollView>
             </ImageBackground>
         </View>
     );
@@ -144,18 +155,18 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: "center",
     },
+    scrollviewStyle: { flex: 1 },
 
     innercontainer: {
         alignItems: "center",
-        
+
     },
-    headertext: {
-        fontWeight: "bold",
-        fontSize: 25,
-        color: "orange",
+    mainheading: {
+        fontSize: 22,
+        color: "black",
         alignSelf: "center",
-        marginVertical: 40,
-       
+        marginVertical: 90,
+        fontWeight: "bold",
     },
 
     checkText: {
@@ -171,7 +182,20 @@ const styles = StyleSheet.create({
         elevation: 5,
         marginHorizontal: 20,
         marginTop: 5,
-      
+        paddingLeft: 16
+
+    },
+    passwordInputView: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "center",
+        width: "100%",
+        // marginBottom: 5,
+    },
+    eyeIconStyle: {
+        position: "absolute",
+        right: 50,
+        bottom: 10
     },
 
     image: {
@@ -179,51 +203,22 @@ const styles = StyleSheet.create({
         justifyContent: "center",
     },
 
-    LoginButtonText: {
-        color: "white",
-        fontWeight: "bold",
-        fontSize: 20,
-    },
-
     Login: {
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "flex-end",
-        margin: 20,
-    },
-    SignUp: {
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "flex-end",
-        margin: 20,
-    },
-
-    aerrowTouch: {
-        backgroundColor: "orange",
-        padding: 7,
         borderRadius: 20,
-        marginRight: 20,
+        backgroundColor: "#dcdcdc",
+        width: "80%",
+        padding: 10,
+        elevation: 6,
+        marginHorizontal: 35,
+        marginTop: 5,
+    },
+    LoginButtonText: {
+        fontSize: 17,
+        fontWeight: 'bold',
+        color: 'black',
+        textAlign: 'center'
     },
 
-    rightAerrowButton: {
-        height: 30,
-        width: 30,
-        tintColor: "white",
-    },
-    footer: {
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "center",
-        margin: 10,
-    },
-
-    footerText: {
-        fontSize: 15,
-        color: "orange",
-        alignSelf: "center",
-        fontWeight: "bold",
-        margin: 10,
-    },
 });
 
 export default LoginScreen;
