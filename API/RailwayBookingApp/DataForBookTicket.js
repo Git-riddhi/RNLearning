@@ -28,8 +28,8 @@ export const TrainDetails = [
         time: '23:15',
         reachTime: '08:55',
         durationTime: '09h:40m',
-        trainClass :['SL','3A', '2A', '1A', 'CC', 'EC']
-        
+        trainClass: ['SL', '3A', '2A', '1A', 'CC', 'EC']
+
     },
     {
         trainName: 'ARAVALI EXPRESS',
@@ -41,9 +41,9 @@ export const TrainDetails = [
         time: '23:15',
         reachTime: '08:55',
         durationTime: '09h:40m',
-        trainClass :['SL','3A', '2A', '1A', 'CC', 'EC'],
+        trainClass: ['SL', '3A', '2A', '1A', 'CC'],
         selectedClass: null,
-        
+
 
     },
     {
@@ -57,7 +57,7 @@ export const TrainDetails = [
         reachTime: '08:55',
         durationTime: '09h:40m',
         selectedClass: null,
-        trainClass :['SL','3A', '2A', '1A', 'CC', 'EC']
+        trainClass: ['SL', '3A', '2A', '1A', 'CC']
 
     },
     {
@@ -71,7 +71,7 @@ export const TrainDetails = [
         reachTime: '08:55',
         durationTime: '09h:40m',
         selectedClass: null,
-        trainClass :['SL','3A', '2A', '1A', 'CC', 'EC']
+        trainClass: ['SL', '3A', '2A', '1A', 'CC']
 
     },
     {
@@ -85,7 +85,7 @@ export const TrainDetails = [
         reachTime: '08:55',
         durationTime: '09h:40m',
         selectedClass: null,
-        trainClass :['SL','3A', '2A', '1A', 'CC', 'EC']
+        trainClass: ['SL', '3A', '2A', '1A', 'CC']
 
     },
     {
@@ -99,7 +99,7 @@ export const TrainDetails = [
         reachTime: '08:55',
         durationTime: '09h:40m',
         selectedClass: null,
-        trainClass :['SL','3A', '2A', '1A', 'CC', 'EC']
+        trainClass: ['SL', '3A', '2A', '1A', 'CC']
 
     },
     {
@@ -113,7 +113,7 @@ export const TrainDetails = [
         reachTime: '08:55',
         durationTime: '09h:40m',
         selectedClass: null,
-        trainClass :['SL','3A', '2A', '1A', 'CC', 'EC']
+        trainClass: ['SL', '3A', '2A', '1A', 'CC']
     },
     {
         trainName: 'BKN DDR EXPRESS',
@@ -126,7 +126,7 @@ export const TrainDetails = [
         reachTime: '08:55',
         durationTime: '09h:40m',
         selectedClass: null,
-        trainClass :['SL','3A', '2A', '1A', 'CC', 'EC']
+        trainClass: ['SL', '3A', '2A', '1A', 'CC']
     },
     {
         trainName: 'HSR BDTS SF EXPRESS',
@@ -139,30 +139,9 @@ export const TrainDetails = [
         reachTime: '08:55',
         durationTime: '09h:40m',
         selectedClass: null,
-        trainClass :['SL','3A', '2A', '1A', 'CC', 'EC']
+        trainClass: ['SL', '3A', '2A', '1A', 'CC']
     },
 
 ]
-
-// export const TrainClass = [
-//     {
-//         trainClass: 'SL'
-//     },
-//     {
-//         trainClass: '3A'
-//     },
-//     {
-//         trainClass: '2A'
-//     },
-//     {
-//         trainClass: '1A'
-//     },
-//     {
-//         trainClass: 'CC'
-//     },
-//     {
-//         trainClass: 'EC'
-//     },
-// ]
 
 
