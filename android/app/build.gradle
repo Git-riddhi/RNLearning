@@ -159,6 +159,7 @@ dependencies {
     implementation project(':react-native-camera')
     implementation project(':react-native-fs')
     implementation project(':react-native-art')
+    implementation project(':react-native-contacts')
 
    
 
