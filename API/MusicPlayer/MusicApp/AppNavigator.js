@@ -4,6 +4,7 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import Home from './Home';
 import Music from './Music';
+import SplashMusic from './SplashMusic';
 
 const Stack = createNativeStackNavigator();
 
@@ -11,12 +12,14 @@ const AppNavigator = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator
-        initialRouteName={'Home'}
+        initialRouteName={'SplashMusic'}
         screenOptions={{
           headerShown: false,
         }}>
 
         <Stack.Screen name="Home" component={Home} />
+        <Stack.Screen name="SplashMusic" component={SplashMusic} />
+
         
         <Stack.Screen
           name="Music"

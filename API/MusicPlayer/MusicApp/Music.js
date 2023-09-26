@@ -42,14 +42,14 @@ const Music = () => {
 
     console.log('route.params.index ---', route.params.index);
 
-    useEffect(() => {
-        setTimeout(() => {
-            ref.current.scrollToIndex({
-                animated: true,
-                index: currentSong,
-            });
-        }, 100);
-    }, []);
+    // useEffect(() => {
+    //     setTimeout(() => {
+    //         ref.current.scrollToIndex({
+    //             animated: true,
+    //             index: currentSong,
+    //         });
+    //     }, 100);
+    // }, []);
 
     const [isPlayerReady, setIsPlayerReady] = useState(false);
 
