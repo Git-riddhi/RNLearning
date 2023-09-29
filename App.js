@@ -1,14 +1,11 @@
 import React from 'react';
-
-import AppRoutesScreen from './API/RailwayBookingApp/AppRoutesScreen';
-
-
+import AnimatedImage from './API/Animation/AnimatedImage';
 
 const App = () => {
 
 
   return (
-    <AppRoutesScreen />
+    <AnimatedImage />
   );
 };
 
