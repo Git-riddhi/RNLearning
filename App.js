@@ -1,11 +1,11 @@
 import React from 'react';
-import AnimatedImage from './API/Animation/AnimatedImage';
+import AnimatedBoxes from './API/Animation/AnimatedBoxes';
 
 const App = () => {
 
 
   return (
-    <AnimatedImage />
+    <AnimatedBoxes />
   );
 };
 
