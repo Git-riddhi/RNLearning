@@ -1,12 +1,13 @@
+
 import React from 'react';
-import AnimatedBoxes from './API/Animation/AnimatedBoxes';
+import Navigators from './API/NotificationsApp/Navigators';
 
 const App = () => {
 
-
   return (
-    <AnimatedBoxes />
+   <Navigators/>
   );
 };
 
-export default App;
+export default App
+  
